@@ -19,13 +19,13 @@ let currentLayout: StickerLayout = {
                 fontSize: 16,
                 fontWeight: "bold",
                 textAlign: "center",
-                Color: "#333333"
+                color: "#333333"
             } as any // cast to avoid strict casing issues if any
         },
         {
             id: "name-var",
             type: "text",
-            x: 5, y: 25, w: 90, h: 10,
+            x: 5, y: 25, w: 60, h: 10,
             content: "{{name}}",
             style: { fontSize: 14, textAlign: "left" }
         },
@@ -40,6 +40,7 @@ let currentLayout: StickerLayout = {
 
 let selectedElementId: string | null = null;
 let currentDataIndex: number = 0;
+let isEditMode = true;
 
 // --- Services ---
 // Printer is sufficient as we hold state locally
@@ -51,6 +52,7 @@ const dataInput = document.getElementById("data-input") as HTMLTextAreaElement;
 const elementsContainer = document.getElementById("elements-container") as HTMLDivElement;
 const propPanel = document.getElementById("prop-panel") as HTMLDivElement;
 const propContent = document.getElementById("prop-content") as HTMLDivElement;
+const editorOverlay = document.getElementById("editor-overlay") as HTMLDivElement;
 const paginationDiv = document.getElementById("data-pagination") as HTMLDivElement;
 const paginationText = document.getElementById("data-indicator") as HTMLSpanElement;
 
@@ -64,6 +66,7 @@ const inputs = {
 async function init() {
     setupGlobalListeners();
     renderElementsList();
+    updateModeButtons();
     updatePreview();
 }
 
@@ -103,6 +106,7 @@ async function updatePreview() {
         }
 
         await printer.renderToCanvas(currentLayout, data, canvas);
+        if (isEditMode) updateEditorOverlay();
     } catch (e) {
         console.error("Render failed", e);
     }
@@ -166,6 +170,7 @@ function selectElement(id: string) {
     selectedElementId = id;
     renderElementsList(); // Update active class
     renderPropPanel(id);
+    syncOverlaySelection();
 }
 
 function renderPropPanel(id: string) {
@@ -219,6 +224,7 @@ function renderPropPanel(id: string) {
         inp.oninput = (e) => {
             el[field] = parseFloat((e.target as HTMLInputElement).value);
             renderElementsList(); // update overview
+            updateEditorOverlay();
             updatePreview();
         };
         grp.appendChild(inp);
@@ -268,6 +274,234 @@ function renderPropPanel(id: string) {
     }
 }
 
+// --- Editor Overlay (Drag/Resize) ---
+type DragMode = "move" | "resize";
+type ResizeHandle = "nw" | "ne" | "sw" | "se";
+
+interface DragState {
+    id: string;
+    mode: DragMode;
+    handle?: ResizeHandle;
+    startMouseX: number;
+    startMouseY: number;
+    startX: number;
+    startY: number;
+    startW: number;
+    startH: number;
+}
+
+let dragState: DragState | null = null;
+
+const MIN_SIZE_MM = 2;
+const GRID_MM = 1;
+
+function unitToPx(value: number): number {
+    switch (currentLayout.unit) {
+        case "mm": return (value * 96) / 25.4;
+        case "cm": return (value * 96) / 2.54;
+        case "in": return value * 96;
+        case "px": default: return value;
+    }
+}
+
+function pxToUnit(value: number): number {
+    switch (currentLayout.unit) {
+        case "mm": return (value * 25.4) / 96;
+        case "cm": return (value * 2.54) / 96;
+        case "in": return value / 96;
+        case "px": default: return value;
+    }
+}
+
+function roundTo(value: number, decimals: number): number {
+    return parseFloat(value.toFixed(decimals));
+}
+
+function snapPx(value: number, gridPx: number): number {
+    if (gridPx <= 0) return value;
+    return Math.round(value / gridPx) * gridPx;
+}
+
+function clamp(value: number, min: number, max: number): number {
+    return Math.min(max, Math.max(min, value));
+}
+
+function updateEditorOverlay() {
+    if (!editorOverlay || !canvas) return;
+
+    editorOverlay.style.display = isEditMode ? "block" : "none";
+    editorOverlay.style.width = `${canvas.width}px`;
+    editorOverlay.style.height = `${canvas.height}px`;
+
+    if (!isEditMode) {
+        editorOverlay.innerHTML = "";
+        return;
+    }
+
+    editorOverlay.innerHTML = "";
+
+    currentLayout.elements.forEach((el) => {
+        const item = document.createElement("div");
+        item.className = `editor-item${selectedElementId === el.id ? " selected" : ""}`;
+        item.dataset.id = el.id;
+
+        const label = document.createElement("div");
+        label.className = "editor-label";
+        label.innerText = el.id;
+        item.appendChild(label);
+
+        const handles: ResizeHandle[] = ["nw", "ne", "sw", "se"];
+        handles.forEach((handle) => {
+            const h = document.createElement("div");
+            h.className = `resize-handle ${handle}`;
+            h.dataset.handle = handle;
+            item.appendChild(h);
+        });
+
+        positionOverlayItem(el, item);
+
+        item.addEventListener("mousedown", (e) => {
+            const target = e.target as HTMLElement;
+            const handle = target.dataset.handle as ResizeHandle | undefined;
+            startDrag(e, el.id, handle ? "resize" : "move", handle);
+        });
+
+        editorOverlay.appendChild(item);
+    });
+}
+
+function positionOverlayItem(el: StickerElement, item: HTMLDivElement) {
+    const x = unitToPx(el.x);
+    const y = unitToPx(el.y);
+    const w = unitToPx(el.w);
+    const h = unitToPx(el.h);
+    item.style.left = `${x}px`;
+    item.style.top = `${y}px`;
+    item.style.width = `${w}px`;
+    item.style.height = `${h}px`;
+}
+
+function syncOverlaySelection() {
+    const items = editorOverlay?.querySelectorAll(".editor-item");
+    if (!items) return;
+    items.forEach((item) => {
+        const id = (item as HTMLElement).dataset.id;
+        if (id && id === selectedElementId) item.classList.add("selected");
+        else item.classList.remove("selected");
+    });
+}
+
+function startDrag(e: MouseEvent, id: string, mode: DragMode, handle?: ResizeHandle) {
+    const el = currentLayout.elements.find((element) => element.id === id);
+    if (!el) return;
+    e.preventDefault();
+    selectElement(id);
+
+    dragState = {
+        id,
+        mode,
+        handle,
+        startMouseX: e.clientX,
+        startMouseY: e.clientY,
+        startX: unitToPx(el.x),
+        startY: unitToPx(el.y),
+        startW: unitToPx(el.w),
+        startH: unitToPx(el.h),
+    };
+
+    document.addEventListener("mousemove", handleDrag);
+    document.addEventListener("mouseup", endDrag);
+}
+
+function handleDrag(e: MouseEvent) {
+    if (!dragState) return;
+    const el = currentLayout.elements.find((element) => element.id === dragState?.id);
+    if (!el) return;
+
+    const layoutWidthPx = unitToPx(currentLayout.width);
+    const layoutHeightPx = unitToPx(currentLayout.height);
+    const minPx = unitToPx(MIN_SIZE_MM);
+    const gridPx = unitToPx(GRID_MM);
+
+    const dx = e.clientX - dragState.startMouseX;
+    const dy = e.clientY - dragState.startMouseY;
+
+    let x = dragState.startX;
+    let y = dragState.startY;
+    let w = dragState.startW;
+    let h = dragState.startH;
+
+    if (dragState.mode === "move") {
+        x = dragState.startX + dx;
+        y = dragState.startY + dy;
+        x = clamp(x, 0, layoutWidthPx - w);
+        y = clamp(y, 0, layoutHeightPx - h);
+    } else if (dragState.mode === "resize" && dragState.handle) {
+        switch (dragState.handle) {
+            case "nw":
+                x = dragState.startX + dx;
+                y = dragState.startY + dy;
+                w = dragState.startW - dx;
+                h = dragState.startH - dy;
+                break;
+            case "ne":
+                y = dragState.startY + dy;
+                w = dragState.startW + dx;
+                h = dragState.startH - dy;
+                break;
+            case "sw":
+                x = dragState.startX + dx;
+                w = dragState.startW - dx;
+                h = dragState.startH + dy;
+                break;
+            case "se":
+                w = dragState.startW + dx;
+                h = dragState.startH + dy;
+                break;
+        }
+
+        if (w < minPx) {
+            const delta = minPx - w;
+            w = minPx;
+            if (dragState.handle === "nw" || dragState.handle === "sw") x -= delta;
+        }
+        if (h < minPx) {
+            const delta = minPx - h;
+            h = minPx;
+            if (dragState.handle === "nw" || dragState.handle === "ne") y -= delta;
+        }
+
+        x = clamp(x, 0, layoutWidthPx - w);
+        y = clamp(y, 0, layoutHeightPx - h);
+        w = clamp(w, minPx, layoutWidthPx - x);
+        h = clamp(h, minPx, layoutHeightPx - y);
+    }
+
+    if (!e.altKey) {
+        x = snapPx(x, gridPx);
+        y = snapPx(y, gridPx);
+        w = snapPx(w, gridPx);
+        h = snapPx(h, gridPx);
+    }
+
+    el.x = roundTo(pxToUnit(x), 2);
+    el.y = roundTo(pxToUnit(y), 2);
+    el.w = roundTo(pxToUnit(w), 2);
+    el.h = roundTo(pxToUnit(h), 2);
+
+    const item = editorOverlay.querySelector(`.editor-item[data-id="${el.id}"]`) as HTMLDivElement | null;
+    if (item) positionOverlayItem(el, item);
+}
+
+function endDrag() {
+    if (!dragState) return;
+    dragState = null;
+    document.removeEventListener("mousemove", handleDrag);
+    document.removeEventListener("mouseup", endDrag);
+    renderElementsList();
+    if (selectedElementId) renderPropPanel(selectedElementId);
+}
+
 // --- Listeners ---
 function setupGlobalListeners() {
     // Layout Props
@@ -281,6 +515,17 @@ function setupGlobalListeners() {
     document.getElementById("btn-delete-el")?.addEventListener("click", deleteSelectedElement);
 
     document.getElementById("btn-render")?.addEventListener("click", updatePreview);
+    document.getElementById("btn-edit-mode")?.addEventListener("click", () => {
+        isEditMode = true;
+        updateModeButtons();
+        updateEditorOverlay();
+    });
+    document.getElementById("btn-preview-mode")?.addEventListener("click", () => {
+        isEditMode = false;
+        updateModeButtons();
+        updateEditorOverlay();
+        updatePreview();
+    });
 
     // File Upload
     document.getElementById("file-upload")?.addEventListener("change", (e) => {
@@ -383,6 +628,13 @@ function setupGlobalListeners() {
             alert("Failed to copy ZPL code.");
         });
     });
+}
+
+function updateModeButtons() {
+    const editBtn = document.getElementById("btn-edit-mode");
+    const previewBtn = document.getElementById("btn-preview-mode");
+    editBtn?.classList.toggle("active", isEditMode);
+    previewBtn?.classList.toggle("active", !isEditMode);
 }
 
 init();

@@ -92,6 +92,8 @@
     <!-- PREVIEW AREA -->
     <main class="preview-area">
       <div class="toolbar">
+        <button id="btn-edit-mode" class="btn btn-secondary">Edit</button>
+        <button id="btn-preview-mode" class="btn btn-secondary">Preview</button>
         <button id="btn-pdf" class="btn btn-secondary">Download PDF</button>
         <button id="btn-png" class="btn btn-secondary">Download PNG</button>
         <button id="btn-zpl" class="btn btn-secondary">Download ZPL</button>
@@ -100,6 +102,7 @@
 
       <div class="canvas-wrapper">
         <canvas id="preview-canvas"></canvas>
+        <div id="editor-overlay" class="editor-overlay" aria-hidden="true"></div>
       </div>
     </main>
   </div>
