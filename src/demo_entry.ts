@@ -352,6 +352,37 @@ function setupGlobalListeners() {
         link.download = "sticker.png";
         link.click();
     });
+
+    document.getElementById("btn-zpl")?.addEventListener("click", async () => {
+        const data = getData();
+        const dataList = Array.isArray(data) ? data : [data];
+
+        const zplStrings = printer.exportToZPL(currentLayout, dataList);
+        // Combine all ZPL codes into one file
+        const blob = new Blob([zplStrings.join("\n")], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "stickers.zpl";
+        link.click();
+        URL.revokeObjectURL(url);
+    });
+
+    document.getElementById("btn-copy-zpl")?.addEventListener("click", () => {
+        const data = getData();
+        const dataList = Array.isArray(data) ? data : [data];
+
+        const zplStrings = printer.exportToZPL(currentLayout, dataList);
+        const zplContent = zplStrings.join("\n");
+
+        navigator.clipboard.writeText(zplContent).then(() => {
+            alert("ZPL Code copied to clipboard!");
+        }).catch(err => {
+            console.error("Failed to copy ZPL:", err);
+            alert("Failed to copy ZPL code.");
+        });
+    });
 }
 
 init();

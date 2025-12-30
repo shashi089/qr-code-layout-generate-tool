@@ -232,6 +232,84 @@ export class StickerPrinter {
         return doc;
     }
 
+    // --- ZPL Exporter ---
+
+    public exportToZPL(
+        layout: StickerLayout,
+        dataList: Record<string, any>[]
+    ): string[] {
+        const dpi = 203; // Standard Zebra DPI
+        const dpmm = 8;  // dots per mm
+
+        // Helper to convert to dots
+        const toDots = (val: number, unit: string) => {
+            let mm = 0;
+            switch (unit) {
+                case "mm": mm = val; break;
+                case "cm": mm = val * 10; break;
+                case "in": mm = val * 25.4; break;
+                case "px": mm = val * (25.4 / 96); break;
+                default: mm = val;
+            }
+            return Math.round(mm * dpmm);
+        };
+
+        const results: string[] = [];
+
+        for (const data of dataList) {
+            let zpl = "^XA\n"; // Start Format
+
+            // Label Length (optional but good practice)
+            // ^LL<length in dots>
+            const heightDots = toDots(layout.height, layout.unit);
+            const widthDots = toDots(layout.width, layout.unit);
+            zpl += `^PW${widthDots}\n`;
+            zpl += `^LL${heightDots}\n`;
+
+            for (const element of layout.elements) {
+                const filledContent = this.parseContent(element.content, data);
+                const x = toDots(element.x, layout.unit);
+                const y = toDots(element.y, layout.unit);
+
+                zpl += `^FO${x},${y}`;
+
+                if (element.type === "text") {
+                    // Font mapping is tricky. We'll use Scalable Font 0 (^A0)
+                    // Height in dots.
+                    const style = element.style || {};
+                    const fontSizePt = style.fontSize || 12;
+                    // Approximate pt to dots conversion (1 pt = 1/72 inch). 203 DPI.
+                    // dots = pt * (203/72) ~ pt * 2.8
+                    const fontHeightDots = Math.round(fontSizePt * 2.8);
+
+                    zpl += `^A0N,${fontHeightDots},${fontHeightDots}`;
+                    zpl += `^FD${filledContent}^FS\n`;
+                }
+                else if (element.type === "qr") {
+                    // ^BQN,2,height
+                    // ZPL QR codes are controlled by magnification factor mostly.
+                    const w = toDots(element.w, layout.unit);
+                    // Mag factor 1-10. Approximate based on width? 
+                    // Let's assume a reasonable default magnification or calculate roughly.
+                    // ^BQa,b,c,d,e
+                    // ^BQN,2,height
+                    let mag = 2;
+                    if (w > 100) mag = 4;
+                    if (w > 200) mag = 6;
+
+                    zpl += `^BQN,2,${mag}`;
+                    zpl += `^FDQA,${filledContent}^FS\n`;
+                }
+                // Images are very hard in pure ZPL text (need hex conversion), skipping for simple implementation
+            }
+
+            zpl += "^XZ"; // End Format
+            results.push(zpl);
+        }
+
+        return results;
+    }
+
     private async resolveDataUrl(src: string): Promise<string | undefined> {
         if (!src) return undefined;
         if (src.startsWith("data:")) return src;
