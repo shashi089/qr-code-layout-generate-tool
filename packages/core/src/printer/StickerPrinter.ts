@@ -1,6 +1,6 @@
-import jsPDF from "jspdf";
 import { StickerLayout, StickerElement, StickerData, ImageFormat } from "../layout/schema";
 import { generateQR } from "../qr/generator";
+import type { PdfDoc } from "../pdf";
 
 export interface DataUrlOptions {
     format?: ImageFormat;
@@ -145,91 +145,13 @@ export class StickerPrinter {
     public async exportToPDF(
         layout: StickerLayout,
         dataList: Record<string, any>[]
-    ): Promise<jsPDF> {
-        // jsPDF works best with 'pt', 'mm', 'cm', 'in', 'px'.
-        // We will initialize it with the layout unit if possible, or convert.
-        // However, jsPDF 'px' is sometimes specific. Let's use 'mm' or 'pt' as standard and convert layout sizes.
-        // Actually, passing the unit directly to jsPDF is easiest if it matches.
-
-        // NOTE: jsPDF typings might be strict.
-        const validUnits = ["pt", "px", "in", "mm", "cm"];
-        const pdfUnit = validUnits.includes(layout.unit) ? (layout.unit as any) : "mm";
-
-        // Pass custom format (width, height)
-        const doc = new jsPDF({
-            orientation: layout.width > layout.height ? "l" : "p",
-            unit: pdfUnit,
-            format: [layout.width, layout.height] // [width, height] in the specified unit
-        });
-
-        // We can't reuse the Canvas logic 1:1 because Canvas is Raster, PDF is Vector (better text).
-        // But rendering Image Data from Canvas is EASIER for consistency.
-        // User requested "Export to PDF", usually Vector is preferred for print quality.
-        // Let's implement Vector PDF rendering for best quality.
-
-        for (let i = 0; i < dataList.length; i++) {
-            if (i > 0) doc.addPage([layout.width, layout.height], layout.width > layout.height ? "l" : "p");
-
-            const data = dataList[i];
-
-            // Background
-            if (layout.backgroundColor) {
-                doc.setFillColor(layout.backgroundColor);
-                doc.rect(0, 0, layout.width, layout.height, "F");
-            }
-            if (layout.backgroundImage) {
-                const dataUrl = await this.resolveDataUrl(layout.backgroundImage);
-                if (dataUrl) {
-                    doc.addImage(dataUrl, "PNG", 0, 0, layout.width, layout.height);
-                }
-            }
-
-            for (const element of layout.elements) {
-                const filledContent = this.parseContent(element.content, data);
-                const { x, y, w, h } = element; // Assumed in Layout Unit
-
-                if (element.type === "qr") {
-                    if (filledContent) {
-                        const qrUrl = await generateQR(filledContent);
-                        doc.addImage(qrUrl, "PNG", x, y, w, h);
-                    }
-                } else if (element.type === "image") {
-                    if (filledContent) {
-                        // Adding external image to PDF requires it to be base64 or loaded somehow
-                        // skipping complex image loading for now, or assume it's base64/URL
-                        try {
-                            doc.addImage(filledContent, "PNG", x, y, w, h);
-                        } catch (e) {
-                            console.warn("Could not add image to PDF", e);
-                        }
-                    }
-                } else if (element.type === "text") {
-                    const style = element.style || {};
-                    const fontSize = style.fontSize || 12;
-                    const color = style.color || "#000000";
-
-                    // Font conversion needed? jsPDF uses Points by default for font size usually,
-                    // but if unit is mm, it might scale.
-                    doc.setFontSize(fontSize);
-                    doc.setTextColor(color);
-
-                    let drawX = x;
-                    let align = style.textAlign || "left";
-                    if (align === "center") drawX = x + w / 2;
-                    if (align === "right") drawX = x + w;
-
-                    // Baseline correction: Canvas top-left vs PDF (usually baseline)
-                    // jsPDF .text(text, x, y, options)
-                    // We can use { baseline: 'top' } in recent jsPDF
-                    doc.text(filledContent, drawX, y, {
-                        baseline: 'top',
-                        align: (align as "left" | "center" | "right")
-                    });
-                }
-            }
+    ): Promise<PdfDoc> {
+        try {
+            const { exportToPDF } = await import("../pdf");
+            return await exportToPDF(layout, dataList);
+        } catch (err) {
+            throw new Error("PDF export requires optional dependency 'jspdf'. Install it to use exportToPDF().");
         }
-
-        return doc;
     }
 
     // --- ZPL Exporter ---
@@ -310,22 +232,4 @@ export class StickerPrinter {
         return results;
     }
 
-    private async resolveDataUrl(src: string): Promise<string | undefined> {
-        if (!src) return undefined;
-        if (src.startsWith("data:")) return src;
-        if (typeof fetch === "undefined" || typeof FileReader === "undefined") return undefined;
-        try {
-            const res = await fetch(src);
-            const blob = await res.blob();
-            return await new Promise<string>((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result as string);
-                reader.onerror = () => reject(reader.error);
-                reader.readAsDataURL(blob);
-            });
-        } catch (err) {
-            console.warn("Could not resolve data URL", err);
-            return undefined;
-        }
-    }
 }

@@ -6,6 +6,7 @@
   },
   "include": [
     "src/index.ts",
+    "src/pdf.ts",
     "src/layout/**/*.ts",
     "src/printer/**/*.ts",
     "src/qr/**/*.ts"

@@ -1,4 +1,4 @@
-import { StickerPrinter, StickerLayout, StickerElement, ElementType } from "qr-layout-core";
+import { StickerPrinter, StickerLayout, StickerElement, ElementType } from "@qrlayout/core";
 
 // --- State ---
 let currentLayout: StickerLayout = {
@@ -523,6 +523,7 @@ function setupGlobalListeners() {
     document.getElementById("btn-add-text")?.addEventListener("click", () => addElement("text"));
     document.getElementById("btn-add-qr")?.addEventListener("click", () => addElement("qr"));
     document.getElementById("btn-delete-el")?.addEventListener("click", deleteSelectedElement);
+    document.getElementById("btn-save-layout")?.addEventListener("click", saveLayoutJson);
 
     document.getElementById("btn-render")?.addEventListener("click", updatePreview);
     document.getElementById("btn-edit-mode")?.addEventListener("click", () => {
@@ -645,6 +646,22 @@ function updateModeButtons() {
     const previewBtn = document.getElementById("btn-preview-mode");
     editBtn?.classList.toggle("active", isEditMode);
     previewBtn?.classList.toggle("active", !isEditMode);
+}
+
+function saveLayoutJson() {
+    const safeName = (currentLayout.name || currentLayout.id || "layout")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+    const fileName = `${safeName || "layout"}.json`;
+    const content = JSON.stringify(currentLayout, null, 2);
+    const blob = new Blob([content], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(url);
 }
 
 init();

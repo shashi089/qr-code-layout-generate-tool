@@ -1,5 +1,5 @@
 {
-  "name": "qr-layout-ui",
+  "name": "@qrlayout/ui",
   "version": "1.0.0",
   "private": false,
   "type": "module",
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "qr-layout-core": "*"
+    "@qrlayout/core": "*"
   },
   "devDependencies": {
     "typescript": "^5.3.3",

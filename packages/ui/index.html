@@ -1,113 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Code Layout Designer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QR Code Layout Designer</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/src/styles.css">
-</head>
+  <body>
+    <header>
+      <h1>
+        <div class="logo-icon"></div>
+        QR Layout Studio
+      </h1>
+    </header>
 
-<body>
-  <header>
-    <h1>
-      <div class="logo-icon"></div>
-      QR Layout Studio
-    </h1>
-  </header>
-
-  <div class="main-layout">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-
-      <!-- SECTION 1: Layout Config -->
-      <div class="sidebar-section">
-        <div class="sidebar-title">Layout Configuration</div>
-        <div class="form-row">
-          <div class="form-group" style="flex:1">
-            <label>Width (mm)</label>
-            <input type="number" id="layout-width" value="100">
+    <div class="main-layout">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <!-- SECTION 1: Layout Config -->
+        <div class="sidebar-section">
+          <div class="sidebar-title">Layout Configuration</div>
+          <div class="form-row">
+            <div class="form-group" style="flex: 1">
+              <label>Width (mm)</label>
+              <input type="number" id="layout-width" value="100" />
+            </div>
+            <div class="form-group" style="flex: 1">
+              <label>Height (mm)</label>
+              <input type="number" id="layout-height" value="60" />
+            </div>
           </div>
-          <div class="form-group" style="flex:1">
-            <label>Height (mm)</label>
-            <input type="number" id="layout-height" value="60">
+          <div class="form-group">
+            <label>Background</label>
+            <input type="text" id="layout-bg" value="#ffffff" />
+          </div>
+          <button id="btn-save-layout" class="btn btn-secondary btn-block">
+            Save Layout JSON
+          </button>
+        </div>
+
+        <!-- SECTION 2: Elements -->
+        <div class="sidebar-section">
+          <div
+            class="sidebar-title"
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            Elements
+            <div style="display: flex; gap: 5px">
+              <button id="btn-add-text" class="btn btn-secondary btn-sm">
+                + Text
+              </button>
+              <button id="btn-add-qr" class="btn btn-secondary btn-sm">
+                + QR
+              </button>
+            </div>
+          </div>
+          <div id="elements-container" class="element-list">
+            <!-- Elements will be injected here via JS -->
           </div>
         </div>
-        <div class="form-group">
-          <label>Background</label>
-          <input type="text" id="layout-bg" value="#ffffff">
-        </div>
-      </div>
 
-      <!-- SECTION 2: Elements -->
-      <div class="sidebar-section">
-        <div class="sidebar-title" style="display:flex; justify-content:space-between; align-items:center;">
-          Elements
-          <div style="display:flex; gap:5px;">
-            <button id="btn-add-text" class="btn btn-secondary btn-sm">+ Text</button>
-            <button id="btn-add-qr" class="btn btn-secondary btn-sm">+ QR</button>
+        <!-- SECTION 3: Selected Element Prop (Dynamic) -->
+        <div class="sidebar-section" id="prop-panel" style="display: none">
+          <div class="sidebar-title">Properties</div>
+          <div id="prop-content"></div>
+          <button
+            id="btn-delete-el"
+            class="btn btn-danger btn-block"
+            style="margin-top: 10px"
+          >
+            Delete Element
+          </button>
+        </div>
+
+        <!-- SECTION 4: Data Injection -->
+        <div class="sidebar-section" style="flex: 1; border-bottom: none">
+          <div
+            class="sidebar-title"
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            Test Data (JSON)
+            <label
+              for="file-upload"
+              class="btn btn-secondary btn-sm"
+              style="cursor: pointer"
+            >
+              Upload JSON
+              <input
+                type="file"
+                id="file-upload"
+                accept=".json"
+                style="display: none"
+              />
+            </label>
           </div>
+          <textarea
+            id="data-input"
+            style="height: 200px; font-family: monospace"
+          >
+              {
+                "name": "John Doe",
+               "uuid": "https://example.com"
+              }
+          </textarea>
+
+          <div
+            id="data-pagination"
+            style="
+              display: none;
+              margin-top: 5px;
+              align-items: center;
+              justify-content: space-between;
+              background: rgba(255, 255, 255, 0.05);
+              padding: 5px;
+              border-radius: 4px;
+            "
+          >
+            <button
+              id="btn-prev-data"
+              class="btn btn-secondary btn-sm"
+              style="padding: 2px 8px"
+            >
+              &lt;
+            </button>
+            <span id="data-indicator" style="font-size: 0.75rem; color: #aaa"
+              >Item 1 of 1</span
+            >
+            <button
+              id="btn-next-data"
+              class="btn btn-secondary btn-sm"
+              style="padding: 2px 8px"
+            >
+              &gt;
+            </button>
+          </div>
+
+          <button
+            id="btn-render"
+            class="btn btn-primary btn-block"
+            style="margin-top: 10px"
+          >
+            Refresh Preview
+          </button>
         </div>
-        <div id="elements-container" class="element-list">
-          <!-- Elements will be injected here via JS -->
-        </div>
-      </div>
+      </aside>
 
-      <!-- SECTION 3: Selected Element Prop (Dynamic) -->
-      <div class="sidebar-section" id="prop-panel" style="display:none;">
-        <div class="sidebar-title">Properties</div>
-        <div id="prop-content"></div>
-        <button id="btn-delete-el" class="btn btn-danger btn-block" style="margin-top:10px;">Delete Element</button>
-      </div>
-
-      <!-- SECTION 4: Data Injection -->
-      <div class="sidebar-section" style="flex:1; border-bottom:none;">
-        <div class="sidebar-title" style="display:flex; justify-content:space-between; align-items:center;">
-          Test Data (JSON)
-          <label for="file-upload" class="btn btn-secondary btn-sm" style="cursor:pointer;">
-            Upload JSON
-            <input type="file" id="file-upload" accept=".json" style="display:none;">
-          </label>
-        </div>
-        <textarea id="data-input" style="height: 200px; font-family: monospace;">{
-  "name": "John Doe",
-  "uuid": "https://example.com"
-}</textarea>
-
-        <div id="data-pagination"
-          style="display:none; margin-top: 5px; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 4px;">
-          <button id="btn-prev-data" class="btn btn-secondary btn-sm" style="padding: 2px 8px;">&lt;</button>
-          <span id="data-indicator" style="font-size: 0.75rem; color: #aaa;">Item 1 of 1</span>
-          <button id="btn-next-data" class="btn btn-secondary btn-sm" style="padding: 2px 8px;">&gt;</button>
+      <!-- PREVIEW AREA -->
+      <main class="preview-area">
+        <div class="toolbar">
+          <button id="btn-edit-mode" class="btn btn-secondary">Edit</button>
+          <button id="btn-preview-mode" class="btn btn-secondary">
+            Preview
+          </button>
+          <button id="btn-pdf" class="btn btn-secondary">Download PDF</button>
+          <button id="btn-png" class="btn btn-secondary">Download PNG</button>
+          <button id="btn-zpl" class="btn btn-secondary">Download ZPL</button>
+          <button
+            id="btn-copy-zpl"
+            class="btn btn-secondary"
+            title="Copy ZPL code to clipboard"
+          >
+            Copy ZPL
+          </button>
         </div>
 
-        <button id="btn-render" class="btn btn-primary btn-block" style="margin-top: 10px;">Refresh Preview</button>
-      </div>
+        <div class="canvas-wrapper">
+          <canvas id="preview-canvas"></canvas>
+          <div
+            id="editor-overlay"
+            class="editor-overlay"
+            aria-hidden="true"
+          ></div>
+        </div>
+      </main>
+    </div>
 
-    </aside>
-
-    <!-- PREVIEW AREA -->
-    <main class="preview-area">
-      <div class="toolbar">
-        <button id="btn-edit-mode" class="btn btn-secondary">Edit</button>
-        <button id="btn-preview-mode" class="btn btn-secondary">Preview</button>
-        <button id="btn-pdf" class="btn btn-secondary">Download PDF</button>
-        <button id="btn-png" class="btn btn-secondary">Download PNG</button>
-        <button id="btn-zpl" class="btn btn-secondary">Download ZPL</button>
-        <button id="btn-copy-zpl" class="btn btn-secondary" title="Copy ZPL code to clipboard">Copy ZPL</button>
-      </div>
-
-      <div class="canvas-wrapper">
-        <canvas id="preview-canvas"></canvas>
-        <div id="editor-overlay" class="editor-overlay" aria-hidden="true"></div>
-      </div>
-    </main>
-  </div>
-
-  <script type="module" src="/src/index.ts"></script>
-</body>
-
+    <script type="module" src="/src/index.ts"></script>
+  </body>
 </html>

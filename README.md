@@ -2,8 +2,8 @@
 
 This repo contains two packages:
 
-- `qr-layout-core`: the rendering/printing engine (PNG, PDF, ZPL).
-- `qr-layout-ui`: the browser editor UI (drag/drop layout designer).
+- `@qrlayout/core`: the rendering/printing engine (PNG, PDF, ZPL).
+- `@qrlayout/ui`: the browser editor UI (drag/drop layout designer).
 
 ## Prerequisites
 
@@ -42,7 +42,7 @@ npm run build
 ### Core (library)
 
 ```ts
-import { StickerPrinter, type StickerLayout } from "qr-layout-core";
+import { StickerPrinter, type StickerLayout } from "@qrlayout/core";
 
 const layout: StickerLayout = {
   id: "layout-1",
@@ -85,3 +85,12 @@ npm run dev:ui
 ```
 
 The editor lets you design layouts, preview with sample JSON, and export PNG/PDF/ZPL.
+
+## Publish (core)
+
+```bash
+npm run build:core
+npm login
+cd packages/core
+npm publish --access public
+```

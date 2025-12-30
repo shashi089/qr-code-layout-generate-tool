@@ -1,5 +1,5 @@
 {
-  "name": "qr-layout-core",
+  "name": "@qrlayout/core",
   "version": "1.0.0",
   "description": "QR sticker layout builder/renderer/exporter core",
   "type": "module",
@@ -10,6 +10,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./pdf": {
+      "types": "./dist/pdf.d.ts",
+      "import": "./dist/pdf.js"
     }
   },
   "files": [
@@ -21,8 +25,10 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "jspdf": "^3.0.4",
     "qrcode": "^1.5.4"
+  },
+  "optionalDependencies": {
+    "jspdf": "^3.0.4"
   },
   "devDependencies": {
     "@types/jspdf": "^1.3.3",
