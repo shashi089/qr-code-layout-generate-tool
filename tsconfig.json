@@ -1,20 +1,7 @@
 {
-  "compilerOptions": {
-    "target": "ES2019",
-    "module": "ES2020",
-    "moduleResolution": "Node",
-    "lib": ["ES2020", "DOM"],
-    "jsx": "react-jsx",
-    "declaration": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true,
-    "noEmitOnError": true
-  },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "files": [],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/ui" }
+  ]
 }

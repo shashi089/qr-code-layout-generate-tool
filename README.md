@@ -1,39 +1,87 @@
-# QR Layout Studio - Feature Guide
+# QR Layout Workspace
 
-This document outlines the features available in the QR Layout Studio application.
+This repo contains two packages:
 
-## 1. Visual Layout Designer
-A powerful sidebar interface allows you to design your sticker/badge layout physically.
+- `qr-layout-core`: the rendering/printing engine (PNG, PDF, ZPL).
+- `qr-layout-ui`: the browser editor UI (drag/drop layout designer).
 
-*   **Layout Configuration**: Set the physical dimensions (width, height in mm) and background color of your sticker.
-*   **Element Management**:
-    *   **Add Text**: Insert text fields for static labels (e.g., "Conference Pass") or dynamic variables (e.g., `{{name}}`).
-    *   **Add QR Code**: Insert QR codes that can bind to dynamic data (e.g., `{{uuid}}`).
-    *   **Delete Element**: Remove unwanted elements from the canvas.
-*   **Property Editor**: Click on any element in the list to edit its properties:
-    *   **Position & Size**: Fine-tune X, Y, Width, and Height.
-    *   **Content**: Edit the text or variable binding.
-    *   **Styling**: detailed control over Font Size, Color, and Text Alignment (Left, Center, Right).
+## Prerequisites
 
-## 2. Smart Data Injection
-Test your design against real-world data scenarios immediately.
+- Node.js 18+ recommended
+- npm 8+ (workspaces enabled)
 
-*   **JSON Input**: A dedicated text area to paste your JSON data. Supports both:
-    *   **Single Object**: `{"name": "Alice", ...}`
-    *   **Array of Objects**: `[{"name": "Alice"}, {"name": "Bob"}]`
-*   **JSON File Upload**: Upload a `.json` file from your computer to automatically populate the test data.
-*   **Data Pagination**: When an array of data is provided, navigation controls (`< Item 1 of N >`) appear, allowing you to step through and preview each record individually.
+## Install
 
-## 3. Real-Time Preview
-*   **Live Canvas**: The center stage shows a `canvas` rendering of your sticker that updates instantly as you change layout properties or data.
-*   **Variable Substitution**: See exactly how long names or different data values look in your design before printing.
+```bash
+npm install
+```
 
-## 4. Export & Print
-*   **Export Layout**: Save your design configuration as a JSON object (logged to console) for future use.
-*   **Download PDF**: Generates a print-ready PDF.
-    *   If you provided an **Array** of data, it generates a **multi-page PDF**, with one badge per page.
-*   **Download PNG**: Exports the currently previewed badge as a high-quality PNG image.
+## Run the editor UI
 
-## 5. Clean & Modern UI
-*   **Dark-Themed Interface**: A professional, dark-mode inspired design for comfortable usage.
-*   **Responsive Sidebar**: collapsible sections for better organization.
+```bash
+npm run dev:ui
+```
+
+Then open the local URL shown by Vite.
+
+## Build
+
+```bash
+npm run build:core
+npm run build:ui
+```
+
+Or build everything:
+
+```bash
+npm run build
+```
+
+## Package usage
+
+### Core (library)
+
+```ts
+import { StickerPrinter, type StickerLayout } from "qr-layout-core";
+
+const layout: StickerLayout = {
+  id: "layout-1",
+  name: "Badge",
+  width: 100,
+  height: 60,
+  unit: "mm",
+  elements: [
+    { id: "title", type: "text", x: 0, y: 5, w: 100, h: 10, content: "CONFERENCE PASS" },
+    { id: "name", type: "text", x: 5, y: 25, w: 60, h: 10, content: "{{name}}" },
+    { id: "qr", type: "qr", x: 70, y: 20, w: 25, h: 25, content: "{{uuid}}" }
+  ]
+};
+
+const data = { name: "John Doe", uuid: "https://example.com" };
+const printer = new StickerPrinter();
+
+// Browser canvas preview
+const canvas = document.getElementById("preview-canvas") as HTMLCanvasElement;
+await printer.renderToCanvas(layout, data, canvas);
+
+// PNG
+const png = await printer.renderToDataURL(layout, data, { format: "png" });
+
+// PDF
+const pdf = await printer.exportToPDF(layout, [data]);
+pdf.save("stickers.pdf");
+
+// ZPL
+const zpl = printer.exportToZPL(layout, [data]);
+console.log(zpl[0]);
+```
+
+### UI (editor)
+
+The UI package runs the editor with drag/resize controls. Use:
+
+```bash
+npm run dev:ui
+```
+
+The editor lets you design layouts, preview with sample JSON, and export PNG/PDF/ZPL.

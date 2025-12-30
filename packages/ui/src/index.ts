@@ -1,5 +1,4 @@
-import { StickerPrinter } from "./index";
-import { StickerLayout, StickerElement, ElementType } from "./layout/schema";
+import { StickerPrinter, StickerLayout, StickerElement, ElementType } from "qr-layout-core";
 
 // --- State ---
 let currentLayout: StickerLayout = {

@@ -1,38 +1,13 @@
 {
-  "name": "qr-code",
-  "version": "1.0.0",
-  "description": "QR sticker layout builder/renderer/exporter for modern front-end apps",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
+  "name": "qr-layout-workspace",
+  "private": true,
+  "workspaces": [
+    "packages/*"
   ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -p tsconfig.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/shashi089/qr-code.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
-  "bugs": {
-    "url": "https://github.com/shashi089/qr-code/issues"
-  },
-  "homepage": "https://github.com/shashi089/qr-code#readme",
-  "dependencies": {
-    "jspdf": "^3.0.4",
-    "qrcode": "^1.5.4"
-  },
-  "devDependencies": {
-    "@types/jspdf": "^1.3.3",
-    "@types/qrcode": "^1.5.6",
-    "typescript": "^5.3.3",
-    "vite": "^7.2.7"
+    "dev:ui": "npm --workspace packages/ui run dev",
+    "build:core": "npm --workspace packages/core run build",
+    "build:ui": "npm --workspace packages/ui run build",
+    "build": "npm run build:core && npm run build:ui"
   }
 }
