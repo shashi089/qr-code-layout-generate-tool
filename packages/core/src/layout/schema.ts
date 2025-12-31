@@ -1,6 +1,6 @@
 export type Unit = "mm" | "px" | "cm" | "in";
 
-export type ElementType = "text" | "qr" | "image";
+export type ElementType = "text" | "qr";
 
 export interface ElementStyle {
     // Text specific
@@ -8,6 +8,7 @@ export interface ElementStyle {
     fontSize?: number;
     fontWeight?: string | number;
     textAlign?: "left" | "center" | "right";
+    verticalAlign?: "top" | "middle" | "bottom";
     color?: string;
 
     // General

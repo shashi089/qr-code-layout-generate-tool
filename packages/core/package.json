@@ -1,6 +1,6 @@
 {
   "name": "qrlayout-core",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "QR sticker layout builder/renderer/exporter core",
   "author": "Shashidhar Naik <shashidharnaik8@gmail.com>",
   "license": "MIT",

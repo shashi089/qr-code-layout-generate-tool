@@ -1,16 +1,21 @@
 # qrlayout-core
 
-A powerful, framework-agnostic engine for designing and printing QR code sticker layouts. Create pixel-perfect labels with text, QR codes, and images, and export them to **PNG**, **PDF**, or **ZPL** (Zebra Programming Language).
+A powerful, framework-agnostic engine for designing and printing QR code sticker layouts. Create pixel-perfect labels with text and QR codes, and export them to **PNG**, **PDF**, or **ZPL** (Zebra Programming Language).
 
 > [!NOTE]
-> This package is the core rendering engine. for a visual drag-and-drop designer, check out the [QR Layout Workspace](https://github.com/shashi089/qr-code-layout-generate-tool).
+> This package is the core rendering engine. For a visual drag-and-drop designer and a live React example, visit our **[Live Demo](https://qr-layout-design-react-demo.netlify.app/)**.
 
 ## Features
 
-- 📏 **Precise Layouts**: Define stickers in `mm`, `cm`, `in`, or `px`.
-- 🖼️ **Multiple Formats**: Export to Canvas (preview), PNG/JPEG (image), PDF (print), or ZPL (industrial thermal printers).
-- 🧩 **Dynamic Content**: Use variable placeholders (e.g., `{{name}}`, `{{sku}}`) to batch generate unique stickers.
-- 📦 **Lightweight**: Minimal dependencies. PDF export is optional to keep bundle size small.
+-  **Precise Layouts**: Define stickers in `mm`, `cm`, `in`, or `px`.
+-  **Multiple Formats**: Export to Canvas (preview), PNG/JPEG (image), PDF (print), or ZPL (industrial thermal printers).
+-  **Dynamic Content**: Use variable placeholders (e.g., `{{name}}`, `{{sku}}`) to batch generate unique stickers.
+-  **Lightweight**: Minimal dependencies. PDF export is optional to keep bundle size small.
+
+## Live Demo & Examples
+
+- **[Interactive React Demo](https://qr-layout-design-react-demo.netlify.app/)**: A full-featured designer built with this package.
+- **[React Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/example/demo-react)**: Reference implementation for monorepo usage.
 
 ## Installation
 
@@ -67,8 +72,8 @@ import { StickerPrinter } from "qrlayout-core";
 
 // Data to fill placeholders
 const data = { 
-    name: "Alice Johnson", 
-    visitorId: "https://example.com/visitors/alice" 
+    name: "Priyanka Verma", 
+    visitorId: "https://example.com/visitors/priyanka" 
 };
 
 const printer = new StickerPrinter();
@@ -125,7 +130,7 @@ pdfDoc.save("badges.pdf");
 
 | Property | Type | Description |
 |----------|------|-------------|
-| `type` | `"text" \| "qr" \| "image"` | Type of element. |
+| `type` | `"text" \| "qr"` | Type of element. |
 | `x`, `y` | `number` | Position from top-left. |
 | `w`, `h` | `number` | Width and height. |
 | `content` | `string` | Text, URL, or image source. Supports `{{key}}` syntax. |

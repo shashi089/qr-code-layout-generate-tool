@@ -68,14 +68,6 @@ export async function exportToPDF(
           const qrUrl = await generateQR(filledContent);
           doc.addImage(qrUrl, "PNG", x, y, w, h);
         }
-      } else if (element.type === "image") {
-        if (filledContent) {
-          try {
-            doc.addImage(filledContent, "PNG", x, y, w, h);
-          } catch (e) {
-            console.warn("Could not add image to PDF", e);
-          }
-        }
       } else if (element.type === "text") {
         const style = element.style || {};
         const fontSize = style.fontSize || 12;
@@ -89,8 +81,13 @@ export async function exportToPDF(
         if (align === "center") drawX = x + w / 2;
         if (align === "right") drawX = x + w;
 
-        doc.text(filledContent, drawX, y, {
-          baseline: "top",
+        let drawY = y;
+        const vAlign = style.verticalAlign || "top";
+        if (vAlign === "middle") drawY = y + h / 2;
+        if (vAlign === "bottom") drawY = y + h;
+
+        doc.text(filledContent, drawX, drawY, {
+          baseline: vAlign === "middle" ? "middle" : (vAlign === "bottom" ? "bottom" : "top"),
           align: align as "left" | "center" | "right"
         });
       }

@@ -2,6 +2,8 @@
 
 A powerful, monorepo-based tool for designing, generating, and printing QR code layouts. This project provides both a core library for programmatic generation and a user-friendly UI for visual design.
 
+**[View Live Demo](https://qr-layout-design-react-demo.netlify.app/)**
+
 ## Packages
 
 This repository is organized as a monorepo containing:

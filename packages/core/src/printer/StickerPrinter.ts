@@ -69,10 +69,6 @@ export class StickerPrinter {
                 }
             } else if (element.type === "text") {
                 this.drawText(ctx, element, filledContent, x, y, w, h);
-            } else if (element.type === "image") {
-                if (filledContent) { // Assume content is URL
-                    await this.drawImage(ctx, filledContent, x, y, w, h);
-                }
             }
         }
     }
@@ -109,15 +105,22 @@ export class StickerPrinter {
 
         ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
         ctx.fillStyle = style.color || "#000";
-        ctx.textBaseline = "top";
+
+        // Handle Vertical Alignment (textBaseline)
+        ctx.textBaseline = style.verticalAlign === "middle" ? "middle" : (style.verticalAlign === "bottom" ? "bottom" : "top");
         ctx.textAlign = (style.textAlign as CanvasTextAlign) || "left";
 
-        // Handle Alignment X adjusment
+        // Handle Horizontal Alignment X adjustment
         let drawX = x;
         if (style.textAlign === "center") drawX = x + w / 2;
         if (style.textAlign === "right") drawX = x + w;
 
-        ctx.fillText(text, drawX, y);
+        // Handle Vertical Alignment Y adjustment
+        let drawY = y;
+        if (style.verticalAlign === "middle") drawY = y + h / 2;
+        if (style.verticalAlign === "bottom") drawY = y + h;
+
+        ctx.fillText(text, drawX, drawY);
     }
 
     private drawImage(ctx: CanvasRenderingContext2D, url: string, x: number, y: number, w: number, h: number): Promise<void> {
