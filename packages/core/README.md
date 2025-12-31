@@ -1,108 +1,135 @@
 # qrlayout-core
 
-Print-ready QR label layout engine. Build a label template with text/QR/image blocks, then export as PNG, PDF, or ZPL.
+A powerful, framework-agnostic engine for designing and printing QR code sticker layouts. Create pixel-perfect labels with text, QR codes, and images, and export them to **PNG**, **PDF**, or **ZPL** (Zebra Programming Language).
 
 > [!NOTE]
-> This package was previously published as `@shashi089/qrlayout-core`. Please update your dependencies to `qrlayout-core`.
+> This package is the core rendering engine. for a visual drag-and-drop designer, check out the [QR Layout Workspace](https://github.com/shashi089/qr-code-layout-generate-tool).
 
-## Install
+## Features
+
+- 📏 **Precise Layouts**: Define stickers in `mm`, `cm`, `in`, or `px`.
+- 🖼️ **Multiple Formats**: Export to Canvas (preview), PNG/JPEG (image), PDF (print), or ZPL (industrial thermal printers).
+- 🧩 **Dynamic Content**: Use variable placeholders (e.g., `{{name}}`, `{{sku}}`) to batch generate unique stickers.
+- 📦 **Lightweight**: Minimal dependencies. PDF export is optional to keep bundle size small.
+
+## Installation
 
 ```bash
 npm install qrlayout-core
 ```
 
-## Quick start
+## Quick Start
+
+### 1. Define a Layout
+
+A layout is a JSON object describing the sticker dimensions and elements.
 
 ```ts
-import { StickerPrinter, type StickerLayout } from "qrlayout-core";
+import { type StickerLayout } from "qrlayout-core";
 
-const layout: StickerLayout = {
-  id: "layout-1",
-  name: "Badge",
-  width: 100,
-  height: 60,
+const myLayout: StickerLayout = {
+  id: "badge-layout",
+  name: "Conference Badge",
+  width: 100, // 100mm width
+  height: 60, // 60mm height
   unit: "mm",
   elements: [
-    { id: "title", type: "text", x: 0, y: 5, w: 100, h: 10, content: "CONFERENCE PASS" },
-    { id: "name", type: "text", x: 5, y: 25, w: 60, h: 10, content: "{{name}}" },
-    { id: "qr", type: "qr", x: 70, y: 20, w: 25, h: 25, content: "{{uuid}}" }
+    { 
+        id: "title", 
+        type: "text", 
+        x: 0, y: 5, w: 100, h: 10, 
+        content: "VISITOR PASS",
+        style: { fontSize: 14, fontWeight: "bold", textAlign: "center" }
+    },
+    { 
+        id: "name", 
+        type: "text", 
+        x: 5, y: 25, w: 60, h: 10, 
+        content: "{{name}}", // Placeholder
+        style: { fontSize: 12 }
+    },
+    { 
+        id: "qr-code", 
+        type: "qr", 
+        x: 70, y: 20, w: 25, h: 25, 
+        content: "{{visitorId}}" // Placeholder
+    }
   ]
 };
-
-const data = { name: "John Doe", uuid: "https://example.com" };
-const printer = new StickerPrinter();
-
-// Browser canvas preview
-const canvas = document.getElementById("preview-canvas") as HTMLCanvasElement;
-await printer.renderToCanvas(layout, data, canvas);
-
-// PNG
-const png = await printer.renderToDataURL(layout, data, { format: "png" });
-
-// PDF
-const pdf = await printer.exportToPDF(layout, [data]);
-pdf.save("stickers.pdf");
-
-// ZPL
-const zpl = printer.exportToZPL(layout, [data]);
-console.log(zpl[0]);
 ```
 
-## Layout schema
+### 2. Render or Export
+
+Pass data to the `StickerPrinter` to generate outputs.
 
 ```ts
-type Unit = "mm" | "px" | "cm" | "in";
-type ElementType = "text" | "qr" | "image";
+import { StickerPrinter } from "qrlayout-core";
 
-interface StickerElement {
-  id: string;
-  type: ElementType;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  content: string; // supports {{placeholders}}
-  style?: {
-    fontFamily?: string;
-    fontSize?: number;
-    fontWeight?: string | number;
-    textAlign?: "left" | "center" | "right";
-    color?: string;
-    backgroundColor?: string;
-  };
-}
+// Data to fill placeholders
+const data = { 
+    name: "Alice Johnson", 
+    visitorId: "https://example.com/visitors/alice" 
+};
 
-interface StickerLayout {
-  id: string;
-  name: string;
-  width: number;
-  height: number;
-  unit: Unit;
-  elements: StickerElement[];
-  backgroundColor?: string;
-  backgroundImage?: string;
-}
+const printer = new StickerPrinter();
+
+// --- Option A: Render to HTML Canvas (Browser) ---
+const canvas = document.querySelector("#preview") as HTMLCanvasElement;
+await printer.renderToCanvas(myLayout, data, canvas);
+
+// --- Option B: Get an Image URL (PNG) ---
+const imageUrl = await printer.renderToDataURL(myLayout, data, { format: "png", dpi: 300 });
+console.log(imageUrl); // "data:image/png;base64,..."
+
+// --- Option C: Generate ZPL for Thermal Printers ---
+const zplCommands = printer.exportToZPL(myLayout, [data]);
+console.log(zplCommands[0]); // "^XA^FO..."
+
 ```
 
-## Outputs
+## PDF Export (Optional)
 
-- `renderToCanvas` for live preview in the browser
-- `renderToDataURL` for PNG/JPEG/WebP export
-- `exportToPDF` for print-ready PDF (optional)
-- `exportToZPL` for Zebra printers
+To enable PDF export, you must install `jspdf`. This is an optional peer dependency to prevent bloating the core library for users who don't need PDF support.
 
-## Optional PDF export
+### 1. Install jspdf
 
-PDF export is isolated in a separate entry so users can avoid the `jspdf` dependency unless needed.
+```bash
+npm install jspdf
+```
+
+### 2. Use the PDF Module
 
 ```ts
 import { exportToPDF } from "qrlayout-core/pdf";
+
+// Generate a PDF with multiple stickers (e.g., standard A4 sheet logic can be handled by caller, 
+// this function currently outputs one page per sticker or as configured).
+const pdfDoc = await exportToPDF(myLayout, [data, data2, data3]);
+
+// Save the PDF
+pdfDoc.save("badges.pdf");
 ```
 
-If `jspdf` is not installed, `StickerPrinter.exportToPDF()` will throw a clear error.
+## API Reference
 
-## Notes
+### `StickerLayout` Interface
 
-- Text alignment is horizontal only (left/center/right).
-- For ZPL, images are not embedded (text and QR only).
-- When using external images in the browser, CORS headers are required or the canvas export will fail.
+| Property | Type | Description |
+|----------|------|-------------|
+| `width` | `number` | Width of the sticker. |
+| `height` | `number` | Height of the sticker. |
+| `unit` | `"mm" \| "cm" \| "in" \| "px"` | Unit of measurement. |
+| `elements` | `StickerElement[]` | List of items on the sticker. |
+
+### `StickerElement` Interface
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `type` | `"text" \| "qr" \| "image"` | Type of element. |
+| `x`, `y` | `number` | Position from top-left. |
+| `w`, `h` | `number` | Width and height. |
+| `content` | `string` | Text, URL, or image source. Supports `{{key}}` syntax. |
+
+## License
+
+MIT
