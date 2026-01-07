@@ -69,7 +69,7 @@ export function LayoutModule() {
                         { id: 't1', type: 'text', x: 5, y: 5, w: 90, h: 8, content: 'VISITOR PASS', style: { textAlign: 'center', fontWeight: 'bold', verticalAlign: "middle" } },
                         { id: 't2', type: 'text', x: 4, y: 18, w: 60, h: 8, content: "{{name}}", style: { textAlign: 'center', fontWeight: 'bold', verticalAlign: "middle" } },
                         { id: 't3', type: 'text', x: 4, y: 28, w: 60, h: 8, content: "{{designation}}", style: { textAlign: 'center', fontWeight: 'bold', verticalAlign: "middle" } },
-                         { id: 't4', type: 'text', x: 4, y: 38, w: 60, h: 8, content: "{{place}}", style: { textAlign: 'center', fontWeight: 'bold', verticalAlign: "middle" } },
+                        { id: 't4', type: 'text', x: 4, y: 38, w: 60, h: 8, content: "{{place}}", style: { textAlign: 'center', fontWeight: 'bold', verticalAlign: "middle" } },
                         { id: 'q1', type: 'qr', x: 64, y: 18, w: 30, h: 30, content: "{{employeeId}}" },
                     ],
                     isDefault: true,
@@ -486,6 +486,16 @@ export function LayoutModule() {
                                                 onChange={(e) => updateElement(selectedElement.id, { h: Number(e.target.value) })} />
                                         </Grid>
                                     </Grid>
+
+                                    {selectedElement.type === 'qr' && (
+                                        <TextField
+                                            fullWidth label="QR Separator" size="small"
+                                            placeholder="e.g. | or ;"
+                                            value={selectedElement.qrSeparator || ''}
+                                            onChange={(e) => updateElement(selectedElement.id, { qrSeparator: e.target.value })}
+                                            helperText="Used to join consecutive {{variables}}"
+                                        />
+                                    )}
 
                                     {selectedElement.type === 'text' && (
                                         <>

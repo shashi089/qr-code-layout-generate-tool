@@ -22,8 +22,13 @@ export class StickerPrinter {
     }
 
     // Parse variable content like "{{name}}"
-    private parseContent(content: string, data: StickerData): string {
-        return content.replace(/\{\{(.*?)\}\}/g, (_, key) => {
+    private parseContent(content: string, data: StickerData, separator?: string): string {
+        let processed = content;
+        if (separator) {
+            // Replace spaces between braces or just consecutive braces with the separator
+            processed = processed.replace(/\}\}\s*\{\{/g, `}}${separator}{{`);
+        }
+        return processed.replace(/\{\{(.*?)\}\}/g, (_, key) => {
             const trimmedKey = key.trim();
             return data[trimmedKey] !== undefined ? String(data[trimmedKey]) : "";
         });
@@ -60,7 +65,11 @@ export class StickerPrinter {
             const w = this.toPx(element.w, layout.unit);
             const h = this.toPx(element.h, layout.unit);
 
-            const filledContent = this.parseContent(element.content, data);
+            const filledContent = this.parseContent(
+                element.content,
+                data,
+                element.type === "qr" ? element.qrSeparator : undefined
+            );
 
             if (element.type === "qr") {
                 if (filledContent) {
@@ -192,7 +201,11 @@ export class StickerPrinter {
             zpl += `^LL${heightDots}\n`;
 
             for (const element of layout.elements) {
-                const filledContent = this.parseContent(element.content, data);
+                const filledContent = this.parseContent(
+                    element.content,
+                    data,
+                    element.type === "qr" ? element.qrSeparator : undefined
+                );
                 const x = toDots(element.x, layout.unit);
                 const y = toDots(element.y, layout.unit);
 

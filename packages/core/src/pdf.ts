@@ -4,8 +4,12 @@ import { generateQR } from "./qr/generator";
 
 export type PdfDoc = InstanceType<typeof jsPDF>;
 
-function parseContent(content: string, data: StickerData): string {
-  return content.replace(/\{\{(.*?)\}\}/g, (_, key) => {
+function parseContent(content: string, data: StickerData, separator?: string): string {
+  let processed = content;
+  if (separator) {
+    processed = processed.replace(/\}\}\s*\{\{/g, `}}${separator}{{`);
+  }
+  return processed.replace(/\{\{(.*?)\}\}/g, (_, key) => {
     const trimmedKey = String(key).trim();
     return data[trimmedKey] !== undefined ? String(data[trimmedKey]) : "";
   });
@@ -60,7 +64,11 @@ export async function exportToPDF(
     }
 
     for (const element of layout.elements) {
-      const filledContent = parseContent(element.content, data);
+      const filledContent = parseContent(
+        element.content,
+        data,
+        element.type === "qr" ? element.qrSeparator : undefined
+      );
       const { x, y, w, h } = element;
 
       if (element.type === "qr") {

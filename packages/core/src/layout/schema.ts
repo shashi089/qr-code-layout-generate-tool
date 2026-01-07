@@ -30,6 +30,9 @@ export interface StickerElement {
     // OR dynamic variable like "{{name}}"
     content: string;
 
+    // Optional separator for multi-element QR codes
+    qrSeparator?: string;
+
     style?: ElementStyle;
 }
 
