@@ -1,160 +1,108 @@
 import { StickerPrinter, StickerLayout, StickerElement, ElementType } from "qrlayout-core";
 
-// --- State ---
-let currentLayout: StickerLayout = {
+const ENTITY_SCHEMAS: Record<string, { label: string; fields: { name: string; label: string }[]; sampleData: any }> = {
+    employee: {
+        label: "Employee",
+        fields: [
+            { name: "name", label: "Full Name" },
+            { name: "employeeId", label: "Employee ID" },
+            { name: "designation", label: "Designation" },
+            { name: "place", label: "Location" }
+        ],
+        sampleData: { name: "Rajesh Sharma", employeeId: "EMP-101", designation: "Architect", place: "Mumbai" }
+    },
+    vendor: {
+        label: "Vendor",
+        fields: [
+            { name: "name", label: "Company Name" },
+            { name: "vendorId", label: "Vendor ID" },
+            { name: "category", label: "Category" }
+        ],
+        sampleData: { name: "ACME Corp", vendorId: "V-202", category: "Supplies" }
+    }
+};
+
+interface DesignerLayout extends StickerLayout {
+    targetEntity?: string;
+}
+
+// --- Designer State ---
+let currentLayout: DesignerLayout = {
     id: "layout-1",
-    name: "My Custom Layout",
+    name: "New Layout",
+    targetEntity: "employee",
     width: 100,
     height: 60,
     unit: "mm",
     backgroundColor: "#ffffff",
     elements: [
-        {
-            id: "title",
-            type: "text",
-            x: 0, y: 5, w: 100, h: 10,
-            content: "CONFERENCE PASS",
-            style: {
-                fontSize: 16,
-                fontWeight: "bold",
-                textAlign: "center",
-                color: "#333333"
-            } as any // cast to avoid strict casing issues if any
-        },
-        {
-            id: "name-var",
-            type: "text",
-            x: 5, y: 25, w: 60, h: 10,
-            content: "{{name}}",
-            style: { fontSize: 14, textAlign: "left" }
-        },
-        {
-            id: "qr-code",
-            type: "qr",
-            x: 70, y: 20, w: 25, h: 25,
-            content: "{{uuid}}"
-        }
+        { id: "t1", type: "text", x: 5, y: 5, w: 90, h: 8, content: "VISITOR PASS", style: { textAlign: "center", fontWeight: "bold" } },
+        { id: "q1", type: "qr", x: 35, y: 15, w: 30, h: 30, content: "{{employeeId}}" }
     ]
 };
 
 let selectedElementId: string | null = null;
-let currentDataIndex: number = 0;
 let isEditMode = true;
+let isDarkMode = false;
+let pxPerUnit = 1;
 
-// --- Services ---
-// Printer is sufficient as we hold state locally
 const printer = new StickerPrinter();
 
-// --- Utilities ---
-function debounce(func: Function, wait: number) {
-    let timeout: any;
-    return (...args: any[]) => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func(...args), wait);
-    };
-}
-const debouncedUpdatePreview = debounce(updatePreview, 300);
-
-// --- DOM Elements ---
+// --- DOM References ---
 const canvas = document.getElementById("preview-canvas") as HTMLCanvasElement;
-const dataInput = document.getElementById("data-input") as HTMLTextAreaElement;
-const elementsContainer = document.getElementById("elements-container") as HTMLDivElement;
-const propPanel = document.getElementById("prop-panel") as HTMLDivElement;
-const propContent = document.getElementById("prop-content") as HTMLDivElement;
 const editorOverlay = document.getElementById("editor-overlay") as HTMLDivElement;
-const paginationDiv = document.getElementById("data-pagination") as HTMLDivElement;
-const paginationText = document.getElementById("data-indicator") as HTMLSpanElement;
+const elementsContainer = document.getElementById("elements-container") as HTMLDivElement;
+const propertyPanel = document.getElementById("property-panel") as HTMLDivElement;
+const propContent = document.getElementById("prop-content") as HTMLDivElement;
 
 const inputs = {
+    entity: document.getElementById("layout-entity") as HTMLSelectElement,
+    name: document.getElementById("layout-name") as HTMLInputElement,
     width: document.getElementById("layout-width") as HTMLInputElement,
     height: document.getElementById("layout-height") as HTMLInputElement,
+    unit: document.getElementById("layout-unit") as HTMLSelectElement,
+    labelWidth: document.getElementById("label-width") as HTMLLabelElement,
+    labelHeight: document.getElementById("label-height") as HTMLLabelElement,
     bg: document.getElementById("layout-bg") as HTMLInputElement,
+    bgPreview: document.getElementById("bg-preview") as HTMLDivElement,
 };
 
 // --- Initialization ---
-async function init() {
+function init() {
+    syncInputsFromLayout();
     setupGlobalListeners();
     renderElementsList();
-    updateModeButtons();
     updatePreview();
 }
 
-function getData() {
-    try {
-        return JSON.parse(dataInput.value);
-    } catch (e) {
-        console.error("Invalid JSON data", e);
-        return {};
-    }
+function syncInputsFromLayout() {
+    inputs.entity.value = currentLayout.targetEntity || "";
+    inputs.name.value = currentLayout.name;
+    inputs.width.value = currentLayout.width.toFixed(2);
+    inputs.height.value = currentLayout.height.toFixed(2);
+    inputs.unit.value = currentLayout.unit;
+    inputs.labelWidth.innerText = `Width (${currentLayout.unit})`;
+    inputs.labelHeight.innerText = `Height (${currentLayout.unit})`;
+    inputs.bg.value = currentLayout.backgroundColor || "#ffffff";
+    inputs.bgPreview.style.backgroundColor = inputs.bg.value;
 }
 
+// --- Designer Core ---
 async function updatePreview() {
-    // Sync inputs if not focused (optional, but good for initial load)
-    // Actually, let's just render
-    if (!canvas) return;
+    if (!canvas || !currentLayout) return;
 
-    try {
-        let data = getData();
-        // If array, pick element based on index
-        if (Array.isArray(data)) {
-            paginationDiv.style.display = "flex";
-            const max = Math.max(0, data.length - 1);
-            if (currentDataIndex > max) currentDataIndex = 0;
+    // Use sample data based on entity
+    const sampleData = (currentLayout.targetEntity && ENTITY_SCHEMAS[currentLayout.targetEntity])
+        ? ENTITY_SCHEMAS[currentLayout.targetEntity].sampleData
+        : {};
 
-            paginationText.innerText = `Item ${currentDataIndex + 1} of ${data.length}`;
+    await printer.renderToCanvas(currentLayout, sampleData, canvas);
 
-            if (data.length > 0) {
-                console.log(`Previewing item ${currentDataIndex} of ${data.length}`);
-                data = data[currentDataIndex];
-            } else {
-                data = {};
-            }
-        } else {
-            paginationDiv.style.display = "none";
-            currentDataIndex = 0;
-        }
+    const rect = canvas.getBoundingClientRect();
+    pxPerUnit = rect.width / currentLayout.width;
 
-        await printer.renderToCanvas(currentLayout, data, canvas);
-        if (isEditMode) updateEditorOverlay();
-    } catch (e) {
-        console.error("Render failed", e);
-    }
+    updateEditorOverlay();
 }
-
-// --- Layout Modifiers ---
-function updateLayoutProp(key: keyof StickerLayout, value: any) {
-    (currentLayout as any)[key] = value;
-    debouncedUpdatePreview();
-}
-
-function addElement(type: ElementType) {
-    const id = `el-${Date.now()}`;
-    const newEl: StickerElement = {
-        id,
-        type,
-        x: 10,
-        y: 10,
-        w: type === 'qr' ? 20 : 50,
-        h: type === 'qr' ? 20 : 10,
-        content: type === 'qr' ? "{{uuid}}" : "New Text",
-        style: type === 'text' ? { fontSize: 12, color: "#000000" } : undefined
-    };
-    currentLayout.elements.push(newEl);
-    renderElementsList();
-    selectElement(id);
-    updatePreview();
-}
-
-function deleteSelectedElement() {
-    if (!selectedElementId) return;
-    currentLayout.elements = currentLayout.elements.filter(e => e.id !== selectedElementId);
-    selectedElementId = null;
-    renderElementsList();
-    propPanel.style.display = "none";
-    updatePreview();
-}
-
-// --- UI Rendering ---
 
 function renderElementsList() {
     elementsContainer.innerHTML = "";
@@ -163,11 +111,8 @@ function renderElementsList() {
         div.className = `element-item ${selectedElementId === el.id ? "active" : ""}`;
         div.innerHTML = `
             <div class="element-info">
-                <span class="element-name">${el.id}</span>
-                <span class="element-type">${el.type}</span>
-            </div>
-            <div style="font-size:12px; color:#999;">
-                x:${el.x} y:${el.y}
+                <span class="element-name">${el.type.toUpperCase()}</span>
+                <span class="element-sub">${String(el.content).substring(0, 20)}</span>
             </div>
         `;
         div.onclick = () => selectElement(el.id);
@@ -175,493 +120,271 @@ function renderElementsList() {
     });
 }
 
-function selectElement(id: string) {
+function selectElement(id: string | null) {
     selectedElementId = id;
-    renderElementsList(); // Update active class
-    renderPropPanel(id);
-    syncOverlaySelection();
+    renderElementsList();
+    renderPropertyPanel();
+    updateEditorOverlay();
 }
 
-function renderPropPanel(id: string) {
-    const el = currentLayout.elements.find(e => e.id === id);
+function renderPropertyPanel() {
+    if (!selectedElementId) {
+        propertyPanel.style.display = "none";
+        return;
+    }
+    const el = currentLayout.elements.find(e => e.id === selectedElementId);
     if (!el) return;
 
-    propPanel.style.display = "block";
-    propContent.innerHTML = "";
+    propertyPanel.style.display = "block";
+    propContent.innerHTML = `
+        <div class="form-group">
+            <label>Content</label>
+            <textarea id="prop-content-val" rows="2">${el.content}</textarea>
+            <div class="field-buttons" id="field-suggestions"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group" style="flex:1;"><label>X (pos)</label><input type="number" step="0.01" id="prop-x" value="${el.x.toFixed(2)}"></div>
+            <div class="form-group" style="flex:1;"><label>Y (pos)</label><input type="number" step="0.01" id="prop-y" value="${el.y.toFixed(2)}"></div>
+        </div>
+        <div class="form-row">
+            <div class="form-group" style="flex:1;"><label>Width</label><input type="number" step="0.01" id="prop-w" value="${el.w.toFixed(2)}"></div>
+            <div class="form-group" style="flex:1;"><label>Height</label><input type="number" step="0.01" id="prop-h" value="${el.h.toFixed(2)}"></div>
+        </div>
+        ${el.type === 'text' ? `
+            <div style="height: 1px; background: var(--border-color); margin: 16px 0;"></div>
+            <div class="form-row">
+                <div class="form-group" style="flex:1;">
+                    <label>Font Size</label>
+                    <input type="number" id="prop-fontSize" value="${el.style?.fontSize || 12}">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>Font Weight</label>
+                    <select id="prop-fontWeight">
+                        <option value="normal" ${el.style?.fontWeight === 'normal' ? 'selected' : ''}>Normal</option>
+                        <option value="bold" ${el.style?.fontWeight === 'bold' ? 'selected' : ''}>Bold</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Horizontal Align</label>
+                <div class="toggle-group" style="width: 100%;">
+                    <button class="toggle-btn prop-align-h ${el.style?.textAlign === 'left' ? 'active' : ''}" data-val="left" style="flex:1;">Left</button>
+                    <button class="toggle-btn prop-align-h ${el.style?.textAlign === 'center' ? 'active' : ''}" data-val="center" style="flex:1;">Center</button>
+                    <button class="toggle-btn prop-align-h ${el.style?.textAlign === 'right' ? 'active' : ''}" data-val="right" style="flex:1;">Right</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Vertical Align</label>
+                <div class="toggle-group" style="width: 100%;">
+                    <button class="toggle-btn prop-align-v ${el.style?.verticalAlign === 'top' ? 'active' : ''}" data-val="top" style="flex:1;">Top</button>
+                    <button class="toggle-btn prop-align-v ${el.style?.verticalAlign === 'middle' ? 'active' : ''}" data-val="middle" style="flex:1;">Middle</button>
+                    <button class="toggle-btn prop-align-v ${el.style?.verticalAlign === 'bottom' ? 'active' : ''}" data-val="bottom" style="flex:1;">Bottom</button>
+                </div>
+            </div>
+        ` : ''}
+    `;
 
-    // Helper to create input
-    const createInput = (label: string, value: any, type: string = "text", onChange: (val: any) => void) => {
-        const row = document.createElement("div");
-        row.className = "form-group";
-        row.innerHTML = `<label>${label}</label>`;
-        const input = document.createElement("input");
-        input.type = type;
-        input.value = value;
-        input.oninput = (e) => {
+    // Suggestions from Schema
+    const suggestions = document.getElementById("field-suggestions")!;
+    const entitySchema = currentLayout.targetEntity ? ENTITY_SCHEMAS[currentLayout.targetEntity] : null;
+
+    if (entitySchema) {
+        entitySchema.fields.forEach(f => {
+            const pill = document.createElement("div");
+            pill.className = "field-pill";
+            pill.innerText = `+ ${f.label}`;
+            pill.onclick = () => {
+                el.content += `{{${f.name}}}`;
+                renderPropertyPanel();
+                updatePreview();
+            };
+            suggestions.appendChild(pill);
+        });
+    }
+
+    // Listeners
+    const link = (id: string, field: string, isNum = false, subField?: string) => {
+        document.getElementById(id)?.addEventListener("input", (e) => {
             const val = (e.target as HTMLInputElement).value;
-            onChange(type === "number" ? parseFloat(val) : val);
-        };
-        row.appendChild(input);
-        propContent.appendChild(row);
-    };
+            const finalVal = isNum ? parseFloat(val) || 0 : val;
 
-    // ID (Read only for now)
-    createInput("ID", el.id, "text", (val) => {
-        el.id = val;
-        renderElementsList();
-    });
-
-    // Content
-    createInput("Content", el.content, "text", (val) => {
-        el.content = val;
-        updatePreview();
-    });
-
-    // Position
-    const posRow = document.createElement("div");
-    posRow.className = "form-row";
-    propContent.appendChild(posRow);
-
-    const createSmallInput = (lbl: string, val: number, field: 'x' | 'y' | 'w' | 'h') => {
-        const grp = document.createElement("div");
-        grp.className = "form-group";
-        grp.style.flex = "1";
-        grp.innerHTML = `<label>${lbl}</label>`;
-        const inp = document.createElement("input");
-        inp.type = "number";
-        inp.value = String(val);
-        inp.oninput = (e) => {
-            el[field] = parseFloat((e.target as HTMLInputElement).value);
-            renderElementsList(); // update overview
-            updateEditorOverlay();
-            debouncedUpdatePreview();
-        };
-        grp.appendChild(inp);
-        posRow.appendChild(grp);
-    };
-
-    createSmallInput("X", el.x, 'x');
-    createSmallInput("Y", el.y, 'y');
-    createSmallInput("W", el.w, 'w');
-    createSmallInput("H", el.h, 'h');
-
-    // Style (if text)
-    if (el.type === "text") {
-        if (!el.style) el.style = {};
-
-        createInput("Font Size (pt)", el.style.fontSize || 12, "number", (val) => {
-            if (!el.style) el.style = {};
-            el.style.fontSize = val;
-            debouncedUpdatePreview();
-        });
-
-        createInput("Color", el.style.color || "#000000", "text", (val) => {
-            if (!el.style) el.style = {};
-            el.style.color = val;
-            debouncedUpdatePreview();
-        });
-
-        // Align
-        const alignRow = document.createElement("div");
-        alignRow.className = "form-group";
-        alignRow.innerHTML = "<label>Alignment</label>";
-        const select = document.createElement("select");
-        ["left", "center", "right"].forEach(opt => {
-            const o = document.createElement("option");
-            o.value = opt;
-            o.text = opt;
-            o.selected = el.style?.textAlign === opt;
-            select.appendChild(o);
-        });
-        select.onchange = (e) => {
-            if (!el.style) el.style = {};
-            el.style.textAlign = (e.target as HTMLSelectElement).value as any;
+            if (subField) {
+                if (!el.style) el.style = {};
+                (el.style as any)[subField] = finalVal;
+            } else {
+                (el as any)[field] = finalVal;
+            }
             updatePreview();
-        };
-        alignRow.appendChild(select);
-        propContent.appendChild(alignRow);
+        });
+    };
+    link("prop-content-val", "content");
+    link("prop-x", "x", true);
+    link("prop-y", "y", true);
+    link("prop-w", "w", true);
+    link("prop-h", "h", true);
+
+    if (el.type === 'text') {
+        link("prop-fontSize", "style", true, "fontSize");
+        link("prop-fontWeight", "style", false, "fontWeight");
+
+        document.querySelectorAll(".prop-align-h").forEach(btn => {
+            btn.addEventListener("click", () => {
+                if (!el.style) el.style = {};
+                el.style.textAlign = (btn as HTMLElement).dataset.val as any;
+                renderPropertyPanel();
+                updatePreview();
+            });
+        });
+
+        document.querySelectorAll(".prop-align-v").forEach(btn => {
+            btn.addEventListener("click", () => {
+                if (!el.style) el.style = {};
+                el.style.verticalAlign = (btn as HTMLElement).dataset.val as any;
+                renderPropertyPanel();
+                updatePreview();
+            });
+        });
     }
-}
-
-// --- Editor Overlay (Drag/Resize) ---
-type DragMode = "move" | "resize";
-type ResizeHandle = "nw" | "ne" | "sw" | "se";
-
-interface DragState {
-    id: string;
-    mode: DragMode;
-    handle?: ResizeHandle;
-    startMouseX: number;
-    startMouseY: number;
-    startX: number;
-    startY: number;
-    startW: number;
-    startH: number;
-}
-
-let dragState: DragState | null = null;
-
-const MIN_SIZE_MM = 2;
-const GRID_MM = 1;
-
-function unitToPx(value: number): number {
-    switch (currentLayout.unit) {
-        case "mm": return (value * 96) / 25.4;
-        case "cm": return (value * 96) / 2.54;
-        case "in": return value * 96;
-        case "px": default: return value;
-    }
-}
-
-function pxToUnit(value: number): number {
-    switch (currentLayout.unit) {
-        case "mm": return (value * 25.4) / 96;
-        case "cm": return (value * 2.54) / 96;
-        case "in": return value / 96;
-        case "px": default: return value;
-    }
-}
-
-function roundTo(value: number, decimals: number): number {
-    return parseFloat(value.toFixed(decimals));
-}
-
-function snapPx(value: number, gridPx: number): number {
-    if (gridPx <= 0) return value;
-    return Math.round(value / gridPx) * gridPx;
-}
-
-function clamp(value: number, min: number, max: number): number {
-    return Math.min(max, Math.max(min, value));
 }
 
 function updateEditorOverlay() {
     if (!editorOverlay || !canvas) return;
-
-    editorOverlay.style.display = isEditMode ? "block" : "none";
-    editorOverlay.style.width = `${canvas.width}px`;
-    editorOverlay.style.height = `${canvas.height}px`;
-
-    if (!isEditMode) {
-        editorOverlay.innerHTML = "";
-        return;
-    }
-
+    editorOverlay.style.width = canvas.style.width;
+    editorOverlay.style.height = canvas.style.height;
     editorOverlay.innerHTML = "";
 
-    currentLayout.elements.forEach((el) => {
+    currentLayout.elements.forEach(el => {
         const item = document.createElement("div");
-        item.className = `editor-item${selectedElementId === el.id ? " selected" : ""}`;
-        item.dataset.id = el.id;
+        item.className = `editor-item ${selectedElementId === el.id ? "selected" : ""}`;
+        item.style.left = `${el.x * pxPerUnit}px`;
+        item.style.top = `${el.y * pxPerUnit}px`;
+        item.style.width = `${el.w * pxPerUnit}px`;
+        item.style.height = `${el.h * pxPerUnit}px`;
 
-        const label = document.createElement("div");
-        label.className = "editor-label";
-        label.innerText = el.id;
-        item.appendChild(label);
+        if (selectedElementId === el.id) {
+            const handle = document.createElement("div");
+            handle.className = "resize-handle";
+            handle.onmousedown = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                startElementResize(e, el);
+            };
+            item.appendChild(handle);
+        }
 
-        const handles: ResizeHandle[] = ["nw", "ne", "sw", "se"];
-        handles.forEach((handle) => {
-            const h = document.createElement("div");
-            h.className = `resize-handle ${handle}`;
-            h.dataset.handle = handle;
-            item.appendChild(h);
-        });
-
-        positionOverlayItem(el, item);
-
-        item.addEventListener("mousedown", (e) => {
-            const target = e.target as HTMLElement;
-            const handle = target.dataset.handle as ResizeHandle | undefined;
-            startDrag(e, el.id, handle ? "resize" : "move", handle);
-        });
+        item.onmousedown = (e) => {
+            e.preventDefault();
+            selectElement(el.id);
+            startElementDrag(e, el);
+        };
 
         editorOverlay.appendChild(item);
     });
 }
 
-function positionOverlayItem(el: StickerElement, item: HTMLDivElement) {
-    const x = unitToPx(el.x);
-    const y = unitToPx(el.y);
-    const w = unitToPx(el.w);
-    const h = unitToPx(el.h);
-    item.style.left = `${x}px`;
-    item.style.top = `${y}px`;
-    item.style.width = `${w}px`;
-    item.style.height = `${h}px`;
+function startElementResize(e: MouseEvent, el: StickerElement) {
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const initW = el.w;
+    const initH = el.h;
+
+    const onMove = (me: MouseEvent) => {
+        el.w = Math.max(1, initW + (me.clientX - startX) / pxPerUnit);
+        el.h = Math.max(1, initH + (me.clientY - startY) / pxPerUnit);
+        updatePreview();
+        renderPropertyPanel();
+    };
+    const onUp = () => {
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("mouseup", onUp);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
 }
 
-function syncOverlaySelection() {
-    const items = editorOverlay?.querySelectorAll(".editor-item");
-    if (!items) return;
-    items.forEach((item) => {
-        const id = (item as HTMLElement).dataset.id;
-        if (id && id === selectedElementId) item.classList.add("selected");
-        else item.classList.remove("selected");
-    });
+function startElementDrag(e: MouseEvent, el: StickerElement) {
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const initX = el.x;
+    const initY = el.y;
+
+    const onMove = (me: MouseEvent) => {
+        el.x = initX + (me.clientX - startX) / pxPerUnit;
+        el.y = initY + (me.clientY - startY) / pxPerUnit;
+        updatePreview();
+        renderPropertyPanel();
+    };
+    const onUp = () => {
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("mouseup", onUp);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
 }
 
-function startDrag(e: MouseEvent, id: string, mode: DragMode, handle?: ResizeHandle) {
-    const el = currentLayout.elements.find((element) => element.id === id);
-    if (!el) return;
-    e.preventDefault();
-    selectElement(id);
-
-    dragState = {
-        id,
-        mode,
-        handle,
-        startMouseX: e.clientX,
-        startMouseY: e.clientY,
-        startX: unitToPx(el.x),
-        startY: unitToPx(el.y),
-        startW: unitToPx(el.w),
-        startH: unitToPx(el.h),
+// --- Global UX Handlers ---
+function setupGlobalListeners() {
+    // Theme
+    document.getElementById("btn-theme-toggle")!.onclick = () => {
+        isDarkMode = !isDarkMode;
+        document.body.classList.toggle("dark-mode", isDarkMode);
+        document.getElementById("btn-theme-toggle")!.innerText = isDarkMode ? "Light Mode" : "Dark Mode";
     };
 
-    document.addEventListener("mousemove", handleDrag);
-    document.addEventListener("mouseup", endDrag);
-}
-
-function handleDrag(e: MouseEvent) {
-    if (!dragState) return;
-    const el = currentLayout.elements.find((element) => element.id === dragState?.id);
-    if (!el) return;
-
-    const layoutWidthPx = unitToPx(currentLayout.width);
-    const layoutHeightPx = unitToPx(currentLayout.height);
-    const minPx = unitToPx(MIN_SIZE_MM);
-    const gridPx = unitToPx(GRID_MM);
-
-    const dx = e.clientX - dragState.startMouseX;
-    const dy = e.clientY - dragState.startMouseY;
-
-    let x = dragState.startX;
-    let y = dragState.startY;
-    let w = dragState.startW;
-    let h = dragState.startH;
-
-    if (dragState.mode === "move") {
-        x = dragState.startX + dx;
-        y = dragState.startY + dy;
-        x = clamp(x, 0, layoutWidthPx - w);
-        y = clamp(y, 0, layoutHeightPx - h);
-    } else if (dragState.mode === "resize" && dragState.handle) {
-        switch (dragState.handle) {
-            case "nw":
-                x = dragState.startX + dx;
-                y = dragState.startY + dy;
-                w = dragState.startW - dx;
-                h = dragState.startH - dy;
-                break;
-            case "ne":
-                y = dragState.startY + dy;
-                w = dragState.startW + dx;
-                h = dragState.startH - dy;
-                break;
-            case "sw":
-                x = dragState.startX + dx;
-                w = dragState.startW - dx;
-                h = dragState.startH + dy;
-                break;
-            case "se":
-                w = dragState.startW + dx;
-                h = dragState.startH + dy;
-                break;
-        }
-
-        if (w < minPx) {
-            const delta = minPx - w;
-            w = minPx;
-            if (dragState.handle === "nw" || dragState.handle === "sw") x -= delta;
-        }
-        if (h < minPx) {
-            const delta = minPx - h;
-            h = minPx;
-            if (dragState.handle === "nw" || dragState.handle === "ne") y -= delta;
-        }
-
-        x = clamp(x, 0, layoutWidthPx - w);
-        y = clamp(y, 0, layoutHeightPx - h);
-        w = clamp(w, minPx, layoutWidthPx - x);
-        h = clamp(h, minPx, layoutHeightPx - y);
-    }
-
-    if (!e.altKey) {
-        x = snapPx(x, gridPx);
-        y = snapPx(y, gridPx);
-        w = snapPx(w, gridPx);
-        h = snapPx(h, gridPx);
-    }
-
-    el.x = roundTo(pxToUnit(x), 2);
-    el.y = roundTo(pxToUnit(y), 2);
-    el.w = roundTo(pxToUnit(w), 2);
-    el.h = roundTo(pxToUnit(h), 2);
-
-    const item = editorOverlay.querySelector(`.editor-item[data-id="${el.id}"]`) as HTMLDivElement | null;
-    if (item) positionOverlayItem(el, item);
-}
-
-function endDrag() {
-    if (!dragState) return;
-    dragState = null;
-    document.removeEventListener("mousemove", handleDrag);
-    document.removeEventListener("mouseup", endDrag);
-    renderElementsList();
-    if (selectedElementId) renderPropPanel(selectedElementId);
-    updatePreview();
-}
-
-// --- Listeners ---
-function setupGlobalListeners() {
     // Layout Props
-    inputs.width.oninput = (e) => updateLayoutProp("width", parseFloat((e.target as HTMLInputElement).value));
-    inputs.height.oninput = (e) => updateLayoutProp("height", parseFloat((e.target as HTMLInputElement).value));
-    inputs.bg.oninput = (e) => updateLayoutProp("backgroundColor", (e.target as HTMLInputElement).value);
-
-    // Actions
-    document.getElementById("btn-add-text")?.addEventListener("click", () => addElement("text"));
-    document.getElementById("btn-add-qr")?.addEventListener("click", () => addElement("qr"));
-    document.getElementById("btn-delete-el")?.addEventListener("click", deleteSelectedElement);
-    document.getElementById("btn-save-layout")?.addEventListener("click", saveLayoutJson);
-
-    document.getElementById("btn-render")?.addEventListener("click", updatePreview);
-    document.getElementById("btn-edit-mode")?.addEventListener("click", () => {
-        isEditMode = true;
-        updateModeButtons();
-        updateEditorOverlay();
-    });
-    document.getElementById("btn-preview-mode")?.addEventListener("click", () => {
-        isEditMode = false;
-        updateModeButtons();
-        updateEditorOverlay();
+    inputs.entity.onchange = (e) => {
+        currentLayout.targetEntity = (e.target as HTMLSelectElement).value;
+        renderPropertyPanel();
         updatePreview();
-    });
+    };
+    inputs.name.oninput = (e) => currentLayout.name = (e.target as HTMLInputElement).value;
+    inputs.width.oninput = (e) => { currentLayout.width = parseFloat((e.target as HTMLInputElement).value) || 100; updatePreview(); };
+    inputs.height.oninput = (e) => { currentLayout.height = parseFloat((e.target as HTMLInputElement).value) || 60; updatePreview(); };
+    inputs.unit.onchange = (e) => {
+        currentLayout.unit = (e.target as HTMLSelectElement).value as any;
+        inputs.labelWidth.innerText = `Width (${currentLayout.unit})`;
+        inputs.labelHeight.innerText = `Height (${currentLayout.unit})`;
+        updatePreview();
+    };
+    inputs.bg.oninput = (e) => {
+        currentLayout.backgroundColor = (e.target as HTMLInputElement).value;
+        inputs.bgPreview.style.backgroundColor = currentLayout.backgroundColor;
+        updatePreview();
+    };
 
-    // File Upload
-    document.getElementById("file-upload")?.addEventListener("change", (e) => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        if (!file) return;
+    // Elements
+    document.getElementById("btn-add-text")!.onclick = () => {
+        const id = "t" + Date.now();
+        currentLayout.elements.push({ id, type: 'text', x: 10, y: 10, w: 40, h: 10, content: "New Text" });
+        selectElement(id);
+        updatePreview();
+    };
+    document.getElementById("btn-add-qr")!.onclick = () => {
+        const id = "q" + Date.now();
+        currentLayout.elements.push({ id, type: 'qr', x: 5, y: 5, w: 20, h: 20, content: "{{id}}" });
+        selectElement(id);
+        updatePreview();
+    };
+    document.getElementById("btn-delete-element")!.onclick = () => {
+        currentLayout.elements = currentLayout.elements.filter(e => e.id !== selectedElementId);
+        selectElement(null);
+        updatePreview();
+    };
 
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-            const text = evt.target?.result as string;
-            if (text) {
-                // Validate JSON
-                try {
-                    JSON.parse(text); // Just to check if valid
-                    dataInput.value = text;
-                    currentDataIndex = 0; // Reset pagination
-                    updatePreview();
-                } catch (err) {
-                    alert("Invalid JSON file");
-                    console.error(err);
-                }
-            }
-        };
-        reader.readAsText(file);
-        // Clear value so same file can be selected again
-        (e.target as HTMLInputElement).value = "";
-    });
-
-    // Pagination
-    document.getElementById("btn-prev-data")?.addEventListener("click", () => {
-        const data = getData();
-        if (Array.isArray(data) && data.length > 0) {
-            currentDataIndex--;
-            if (currentDataIndex < 0) currentDataIndex = data.length - 1;
-            updatePreview();
-        }
-    });
-
-    document.getElementById("btn-next-data")?.addEventListener("click", () => {
-        const data = getData();
-        if (Array.isArray(data) && data.length > 0) {
-            currentDataIndex++;
-            if (currentDataIndex >= data.length) currentDataIndex = 0;
-            updatePreview();
-        }
-    });
-
-    // Downloads
-    document.getElementById("btn-pdf")?.addEventListener("click", async () => {
-        const data = getData();
-        // Pass array directly if it is an array, else wrap in array
-        const dataList = Array.isArray(data) ? data : [data];
-
-        const doc = await printer.exportToPDF(currentLayout, dataList);
-        doc.save("stickers.pdf");
-    });
-
-    document.getElementById("btn-png")?.addEventListener("click", async () => {
-        let data = getData();
-        if (Array.isArray(data)) {
-            if (data.length === 0) data = {};
-            else {
-                alert("Multiple items detected. Downloading the first one as PNG.");
-                data = data[0];
-            }
-        }
-        const url = await printer.renderToDataURL(currentLayout, data, { format: "png" });
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "sticker.png";
-        link.click();
-    });
-
-    document.getElementById("btn-zpl")?.addEventListener("click", async () => {
-        const data = getData();
-        const dataList = Array.isArray(data) ? data : [data];
-
-        const zplStrings = printer.exportToZPL(currentLayout, dataList);
-        // Combine all ZPL codes into one file
-        const blob = new Blob([zplStrings.join("\n")], { type: "text/plain" });
+    // Export Logic
+    document.getElementById("btn-export-json")!.onclick = () => {
+        const blob = new Blob([JSON.stringify(currentLayout, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${currentLayout.name.toLowerCase().replace(/ /g, "-")}.json`;
+        a.click();
+    };
 
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "stickers.zpl";
-        link.click();
-        URL.revokeObjectURL(url);
-    });
-
-    document.getElementById("btn-copy-zpl")?.addEventListener("click", () => {
-        const data = getData();
-        const dataList = Array.isArray(data) ? data : [data];
-
-        const zplStrings = printer.exportToZPL(currentLayout, dataList);
-        const zplContent = zplStrings.join("\n");
-
-        navigator.clipboard.writeText(zplContent).then(() => {
-            alert("ZPL Code copied to clipboard!");
-        }).catch(err => {
-            console.error("Failed to copy ZPL:", err);
-            alert("Failed to copy ZPL code.");
-        });
-    });
-}
-
-function updateModeButtons() {
-    const editBtn = document.getElementById("btn-edit-mode");
-    const previewBtn = document.getElementById("btn-preview-mode");
-    editBtn?.classList.toggle("active", isEditMode);
-    previewBtn?.classList.toggle("active", !isEditMode);
-}
-
-function saveLayoutJson() {
-    const safeName = (currentLayout.name || currentLayout.id || "layout")
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "");
-    const fileName = `${safeName || "layout"}.json`;
-    const content = JSON.stringify(currentLayout, null, 2);
-    const blob = new Blob([content], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = fileName;
-    link.click();
-    URL.revokeObjectURL(url);
+    document.getElementById("btn-save-all")!.onclick = () => {
+        console.log("Saving Layout Data:", currentLayout);
+        alert("Layout data logged to console. In a real integration, this would trigger an onChange prop.");
+    };
 }
 
 init();
