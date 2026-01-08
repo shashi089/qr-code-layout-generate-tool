@@ -1,15 +1,19 @@
+// App.tsx
 import { useEffect, useRef, useState } from 'react';
 import { QRLayoutDesigner, type EntitySchema, type StickerLayout } from 'qrlayout-ui';
 import 'qrlayout-ui/style.css';
 import './App.css';
-import { LabelList } from './components/LabelList';
-import { storage, } from './modules/storage';
-import { ArrowLeft, Tag,  } from 'lucide-react';
+import { LabelList } from './features/labels/LabelList';
+import { storage } from './services/storage';
+import { ArrowLeft, Tag, Users } from 'lucide-react';
+import { EmployeeMaster } from './features/employees/EmployeeMaster';
+
+// ... (Existing SAMPLE_SCHEMAS and DEFAULT_NEW_LAYOUT remain unchanged)
 
 // Sample Schema
 const SAMPLE_SCHEMAS: Record<string, EntitySchema> = {
   employee: {
-    label: "Employee Badge",
+    label: "Employee Master",
     fields: [
       { name: "fullName", label: "Full Name" },
       { name: "employeeId", label: "Employee ID" },
@@ -21,21 +25,6 @@ const SAMPLE_SCHEMAS: Record<string, EntitySchema> = {
       employeeId: "EMP-2024-889",
       department: "Engineering",
       joinDate: "2024-01-15"
-    }
-  },
-  inventory: {
-    label: "Inventory Label",
-    fields: [
-      { name: "sku", label: "SKU" },
-      { name: "itemName", label: "Item Name" },
-      { name: "category", label: "Category" },
-      { name: "price", label: "Price" }
-    ],
-    sampleData: {
-      sku: "INV-9920-X",
-      itemName: "Wireless Mouse Pro",
-      category: "Peripherals",
-      price: "$49.99"
     }
   }
 };
@@ -120,16 +109,31 @@ function App() {
     setEditingLayout(null);
   };
 
- 
-
   const handleMainViewChange = (view: MainView) => {
     setMainView(view);
-    setSubView('list');
+    setSubView('list'); // Reset subview when switching main tabs
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {subView === 'list' ? (
+      {/* Main Container */}
+
+      {/* If acting as Designer, cover full screen (or manage as modal) */}
+      {subView === 'designer' ? (
+        <div className="relative">
+          <button
+            onClick={handleBackToList}
+            className="fixed top-4 left-4 z-[9999] flex items-center gap-2 bg-white hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium shadow-md transition-all border border-gray-200 cursor-pointer"
+          >
+            <ArrowLeft size={18} />
+            Back to Labels
+          </button>
+          <div
+            className="designer-container"
+            ref={containerRef}
+          />
+        </div>
+      ) : (
         <>
           {/* Navigation Bar */}
           <div className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40 backdrop-blur-lg bg-white/95">
@@ -162,36 +166,50 @@ function App() {
                     <Tag size={18} />
                     <span>Labels</span>
                   </button>
-                
+                  <button
+                    onClick={() => handleMainViewChange('employees')}
+                    className={`flex items-center gap-2 px-5 py-2.5 font-semibold transition-all duration-200 rounded-lg cursor-pointer ${mainView === 'employees'
+                      ? 'bg-white text-blue-600 shadow-md'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+                      }`}
+                  >
+                    <Users size={18} />
+                    <span>Employees</span>
+                  </button>
                 </nav>
+
+                {/* Actions */}
+                <button
+                  onClick={() => {
+                    if (confirm('Are you sure? This will delete all labels and employees.')) {
+                      storage.clearAll();
+                      setLabels([]);
+                      // Force reload to clear any other state if strictly needed, 
+                      // or just clearing state is enough if EmployeeMaster fetches on mount.
+                      // For EmployeeMaster, we might need a way to trigger reload, but page refresh is simplest for "Reset"
+                      window.location.reload();
+                    }
+                  }}
+                  className="ml-4 text-sm text-red-600 hover:text-red-800 font-medium px-3 py-1.5 hover:bg-red-50 rounded-lg transition-colors cursor-pointer border border-red-100"
+                >
+                  Clear Data
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Content */}
-      
+          {/* Content Based on Tab */}
+          {mainView === 'labels' ? (
             <LabelList
               labels={labels}
               onCreateNew={handleCreateNew}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
-         
+          ) : (
+            <EmployeeMaster />
+          )}
         </>
-      ) : (
-        <div className="relative">
-          <button
-            onClick={handleBackToList}
-            className="fixed top-4 left-4 z-[9999] flex items-center gap-2 bg-white hover:bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium shadow-md transition-all border border-gray-200 cursor-pointer"
-          >
-            <ArrowLeft size={18} />
-            Back to Labels
-          </button>
-          <div
-            className="designer-container"
-            ref={containerRef}
-          />
-        </div>
       )}
     </div>
   )

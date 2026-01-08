@@ -1,73 +1,88 @@
-# React + TypeScript + Vite
+# QR Layout Demo Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A comprehensive React application demonstrating the capabilities of the `qrlayout-ui` and `qrlayout-core` packages. This demo showcases a full-featured QR code badge implementation with design, management, and export capabilities.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 1. Label Designer (`LabelList` & `QRLayoutDesigner`)
+- **Visual Editor**: Drag-and-drop interface for creating sticker layouts.
+- **Rich Elements**: Support for Text, QR Codes, and Images (coming soon).
+- **Customization**: Fine-tune properties like font size, alignment, dimensions, and positioning.
+- **Save & Load**: Layouts are persisted to `localStorage`.
 
-## React Compiler
+### 2. Employee Master Management
+- **CRUD Operations**: Add, Edit, and Delete employee records.
+- **Data Persistence**: Employee data is stored locally.
+- **Search & Filter**: Efficiently manage your employee database.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 3. Batch Export & Printing
+- **Multi-Selection**: Select multiple employees from the master list.
+- **Layout Selection**: Apply any designed sticker layout to the selected records.
+- **Export Options**:
+    - **PNG**: Download individual high-quality badge images.
+    - **PDF**: Generate printable PDF files (individual or batch).
+    - **ZPL**: Generate ZPL code for industrial label printers.
 
-## Expanding the ESLint configuration
+## Tech Stack
+- **Framework**: React 19 + Vite
+- **Styling**: Tailwind CSS 4
+- **Icons**: Lucide React
+- **Core Libraries**: `qrlayout-core`, `qrlayout-ui`
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Prerequisites
+- Node.js (v18 or higher recommended)
+- `npm` or `pnpm`
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Installation
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Navigate to the project root:
+   ```bash
+   cd examples/ui-demo
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Usage Guide
+
+### Designing a Badge
+1. Navigate to the **"Labels"** tab.
+2. Click **"New Layout"** or select an existing one.
+3. Use the designer to drag elements onto the canvas.
+4. Configure element properties (content, position, size) in the sidebar.
+5. Click **"Save"** to persist your layout.
+
+### Managing Employees
+1. Navigate to the **"Employees"** tab.
+2. Click **"Add Employee"** to create a new record.
+3. Fill in the details (Name, ID, Department, etc.) and save.
+
+### Batch Exporting Badges
+1. In the **"Employees"** tab, verify you have at least one Layout saved.
+2. Select a **Layout Template** from the dropdown at the top.
+3. Use the checkboxes to select one or more employees.
+4. Click the **PNG**, **PDF**, or **ZPL** button in the appearing action bar to export.
+
+## Project Structure
+
+```
+src/
+├── components/     # Generic reusable components (e.g., Table)
+├── features/       # Feature-specific modules
+│   ├── employees/  # Employee Master logic
+│   └── labels/     # Label Designer logic
+├── services/       # Shared services (storage, etc.)
+└── App.tsx         # Main application entry
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## License
+MIT

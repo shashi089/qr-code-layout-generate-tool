@@ -61,5 +61,10 @@ export const storage = {
     deleteEmployee: (id: string): void => {
         const employees = storage.getEmployees().filter(e => e.id !== id);
         storage.saveEmployees(employees);
+    },
+
+    clearAll: (): void => {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(EMPLOYEE_STORAGE_KEY);
     }
 };
