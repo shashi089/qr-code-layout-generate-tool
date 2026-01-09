@@ -6,6 +6,7 @@ A framework-agnostic, embeddable UI for designing sticker layouts with QR codes.
 
 ![QR Layout Designer Screenshot](https://github.com/shashi089/qr-code-layout-generate-tool/raw/main/assets/layout_designer.png)
 
+
 ## Features
 
 - **Framework Independent**: Built with vanilla TypeScript, works with React, Vue, Angular, Svelte, or plain HTML/JS.
@@ -35,7 +36,24 @@ Make sure to import the CSS file in your project entry point:
 import "qrlayout-ui/style.css";
 ```
 
-### 2. Basic Setup
+### 2. Styling the Container
+
+The designer expects its parent container to have a defined width and height. If the container has zero height, the designer will not be visible. 
+
+For a **full-screen experience**, you can use the following CSS:
+
+```css
+.designer-container {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+```
+
+### 3. Basic Setup
 
 ```typescript
 import { QRLayoutDesigner } from "qrlayout-ui";
@@ -93,7 +111,11 @@ designer.destroy();
 | `initialLayout` | `StickerLayout` | The initial layout state to load. |
 | `onSave` | `(layout) => void` | Callback triggered when the "Save Layout" button is clicked. |
 
-## React Integration Example
+## Integration Examples
+
+Since `qrlayout-ui` is framework-agnostic, it can be easily integrated into any setup.
+
+### 1. React (TypeScript)
 
 ```tsx
 import { useEffect, useRef } from 'react';
@@ -101,14 +123,14 @@ import { QRLayoutDesigner } from 'qrlayout-ui';
 import 'qrlayout-ui/style.css';
 
 const MyDesigner = () => {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     const designer = new QRLayoutDesigner({
       element: containerRef.current,
-      onSave: (data) => console.log(data)
+      onSave: (data) => console.log('Saved Layout:', data)
     });
 
     return () => designer.destroy();
@@ -116,5 +138,57 @@ const MyDesigner = () => {
 
   return <div ref={containerRef} style={{ width: '100%', height: '800px' }} />;
 };
+
 export default MyDesigner;
+```
+
+### 2. Vue 3 (Composition API)
+
+```vue
+<script setup>
+import { onMounted, onUnmounted, ref } from 'vue';
+import { QRLayoutDesigner } from 'qrlayout-ui';
+import 'qrlayout-ui/style.css';
+
+const container = ref(null);
+let designer = null;
+
+onMounted(() => {
+  designer = new QRLayoutDesigner({
+    element: container.value,
+    onSave: (data) => console.log('Saved:', data)
+  });
+});
+
+onUnmounted(() => {
+  if (designer) designer.destroy();
+});
+</script>
+
+<template>
+  <div ref="container" style="width: 100%; height: 800px;"></div>
+</template>
+```
+
+### 3. Vanilla JavaScript / HTML
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="node_modules/qrlayout-ui/dist/style.css">
+</head>
+<body>
+    <div id="designer" style="width: 100%; height: 800px;"></div>
+
+    <script type="module">
+        import { QRLayoutDesigner } from 'qrlayout-ui';
+        
+        const designer = new QRLayoutDesigner({
+            element: document.getElementById('designer'),
+            onSave: (data) => console.log('Saved:', data)
+        });
+    </script>
+</body>
+</html>
 ```
