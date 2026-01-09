@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.18",
-    "qrlayout-core": "file:../../packages/core",
-    "qrlayout-ui": "file:../../packages/ui",
+    "qrlayout-core": "^1.0.8",
+    "qrlayout-ui": "^1.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
