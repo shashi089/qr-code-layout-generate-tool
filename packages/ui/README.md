@@ -4,6 +4,9 @@ A framework-agnostic, embeddable UI for designing sticker layouts with QR codes.
 
 [**🚀 Live Demo**](https://qr-layout-designer.netlify.app/)
 
+- **[React Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/ui-react)**: Reference implementation for monorepo usage.
+
+
 ![QR Layout Designer Screenshot](https://github.com/shashi089/qr-code-layout-generate-tool/raw/main/assets/layout_designer.png)
 
 

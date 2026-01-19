@@ -1,6 +1,6 @@
 {
   "name": "qrlayout-ui",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Visual designer and UI components for QR layout generation",
   "keywords": [
     "qr",
