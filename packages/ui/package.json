@@ -1,6 +1,6 @@
 {
   "name": "qrlayout-ui",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Visual designer and UI components for QR layout generation",
   "keywords": [
     "qr",
@@ -24,7 +24,7 @@
     "generator",
     "visual-editor",
     "drag-drop",
-    "ui-components"
+    "label-printer"
   ],
   "author": "Shashidhar Naik <shashidharnaik8@gmail.com>",
   "license": "MIT",
