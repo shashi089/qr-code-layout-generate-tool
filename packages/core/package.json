@@ -1,6 +1,6 @@
 {
   "name": "qrlayout-core",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "QR code layout builder, renderer, and exporter for stickers, labels, and PDFs",
   "keywords": [
     "qr",
