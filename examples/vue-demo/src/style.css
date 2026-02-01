@@ -1,0 +1,4 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+@import 'qrlayout-ui/style.css';

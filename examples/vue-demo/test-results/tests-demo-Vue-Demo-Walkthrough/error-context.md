@@ -1,0 +1,90 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e6]:
+    - generic [ref=e7]:
+      - img [ref=e9]
+      - generic [ref=e11]:
+        - heading "QR Layout Studio" [level=1] [ref=e12]
+        - paragraph [ref=e13]: Management Dashboard
+    - navigation [ref=e14]:
+      - link "Home" [ref=e15] [cursor=pointer]:
+        - /url: /
+        - img [ref=e16]
+        - generic [ref=e19]: Home
+      - link "Labels" [ref=e20] [cursor=pointer]:
+        - /url: /labels
+        - img [ref=e21]
+        - generic [ref=e24]: Labels
+      - link "Employees" [ref=e25] [cursor=pointer]:
+        - /url: /employees
+        - img [ref=e26]
+        - generic [ref=e31]: Employees
+      - link "Machines" [ref=e32] [cursor=pointer]:
+        - /url: /machines
+        - img [ref=e33]
+        - generic [ref=e36]: Machines
+      - link "Storage" [active] [ref=e37] [cursor=pointer]:
+        - /url: /storage
+        - img [ref=e38]
+        - generic [ref=e42]: Storage
+    - button "Clear Data" [ref=e43] [cursor=pointer]
+  - generic [ref=e44]:
+    - generic [ref=e45]:
+      - generic [ref=e46]:
+        - heading "Storage Master (BINs)" [level=2] [ref=e47]
+        - paragraph [ref=e48]: Manage warehouse locations and print storage labels
+      - generic [ref=e49]:
+        - generic [ref=e50]:
+          - combobox [ref=e51] [cursor=pointer]:
+            - option "Select Layout Template" [disabled]
+            - option "Storage Location Label" [selected]
+          - generic:
+            - img
+        - button "Add BIN" [ref=e52] [cursor=pointer]:
+          - img [ref=e53]
+          - generic [ref=e54]: Add BIN
+    - generic [ref=e55]:
+      - img [ref=e56]
+      - generic [ref=e58]:
+        - paragraph [ref=e59]: "Warehouse Labeling Instructions:"
+        - list [ref=e60]:
+          - listitem [ref=e61]:
+            - text: Select a
+            - strong [ref=e62]: Storage BIN Label
+            - text: layout from the dropdown.
+          - listitem [ref=e63]: Select the target bins from the table below.
+          - listitem [ref=e64]: Download PNG or PDF for standard labels, or ZPL for thermal industrial printers.
+    - table [ref=e66]:
+      - rowgroup [ref=e67]:
+        - row "BIN Code Storage Type Aisle Rack" [ref=e68]:
+          - columnheader [ref=e69]:
+            - checkbox [ref=e70] [cursor=pointer]
+          - columnheader "BIN Code" [ref=e71]
+          - columnheader "Storage Type" [ref=e72]
+          - columnheader "Aisle" [ref=e73]
+          - columnheader "Rack" [ref=e74]
+      - rowgroup [ref=e75]:
+        - row "BIN-DEL-R1 Pallet Rack Delhi Aisle 01 R1" [ref=e76]:
+          - cell [ref=e77]:
+            - checkbox [ref=e78] [cursor=pointer]
+          - cell "BIN-DEL-R1" [ref=e79]
+          - cell "Pallet Rack" [ref=e80]
+          - cell "Delhi Aisle 01" [ref=e81]
+          - cell "R1" [ref=e82]
+        - row "BIN-MUM-R2 Shelf Mumbai Aisle 01 R2" [ref=e83]:
+          - cell [ref=e84]:
+            - checkbox [ref=e85] [cursor=pointer]
+          - cell "BIN-MUM-R2" [ref=e86]
+          - cell "Shelf" [ref=e87]
+          - cell "Mumbai Aisle 01" [ref=e88]
+          - cell "R2" [ref=e89]
+        - row "BIN-BLR-R1 Cold Storage Bangalore Aisle 02 R1" [ref=e90]:
+          - cell [ref=e91]:
+            - checkbox [ref=e92] [cursor=pointer]
+          - cell "BIN-BLR-R1" [ref=e93]
+          - cell "Cold Storage" [ref=e94]
+          - cell "Bangalore Aisle 02" [ref=e95]
+          - cell "R1" [ref=e96]
+```

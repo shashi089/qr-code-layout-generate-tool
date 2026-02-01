@@ -1,0 +1,31 @@
+{
+  "name": "vue-demo",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.18",
+    "lucide-vue-next": "^0.563.0",
+    "qrlayout-core": "^1.1.1",
+    "qrlayout-ui": "^1.0.4",
+    "tailwindcss": "^4.1.18",
+    "vue": "^3.5.24",
+    "vue-router": "^5.0.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.1",
+    "@tailwindcss/forms": "^0.5.11",
+    "@tailwindcss/typography": "^0.5.19",
+    "@types/node": "^24.10.1",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/tsconfig": "^0.8.1",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.4",
+    "vue-tsc": "^3.1.4"
+  }
+}
