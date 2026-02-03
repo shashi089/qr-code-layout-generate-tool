@@ -5,7 +5,7 @@ A framework-agnostic, embeddable UI for designing sticker layouts with QR codes.
 - **[ React Live Demo](https://qr-layout-designer.netlify.app/)**
 - **[ Svelte Live Demo](https://qr-layout-designer-svelte.netlify.app/)**
 
-- **[React Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/ui-demo)**: Reference implementation for monorepo usage.
+- **[React Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/react-demo)**: Reference implementation for monorepo usage.
 
 - **[Svelte Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/svelte-demo)**: Reference implementation for Svelte 5 + Tailwind CSS.
 

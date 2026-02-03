@@ -1,6 +1,6 @@
 # SvelteKit QR Label Designer
 
-An industrial-grade QR code label design and printing application built with [SvelteKit](https://kit.svelte.dev/) and Tailwind CSS. This project is a modern port of the React-based `ui-demo`, leveraging Svelte 5's runes for state management and creating a high-performance, SEO-friendly web application.
+An industrial-grade QR code label design and printing application built with [SvelteKit](https://kit.svelte.dev/) and Tailwind CSS. This project is a modern port of the React-based `react-demo`, leveraging Svelte 5's runes for state management and creating a high-performance, SEO-friendly web application.
 
 ##  Live Demo
 

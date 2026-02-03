@@ -39,7 +39,7 @@ A comprehensive React application demonstrating the capabilities of the `qrlayou
 
 1. Navigate to the project root:
    ```bash
-   cd examples/ui-demo
+   cd examples/react-demo
    ```
 
 2. Install dependencies:

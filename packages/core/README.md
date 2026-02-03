@@ -24,7 +24,7 @@ QR code, qrcode, qr-code, layout, sticker, label, generator, renderer, PDF, ZPL,
 ## Live Demo & Examples
 
 - **[Interactive Demo](https://qr-layout-designer.netlify.app/)**: A full-featured designer built with `qrlayout-core` and `qrlayout-ui`.
-- **[React Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/ui-demo)**: Reference implementation for monorepo usage.
+- **[React Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/react-demo)**: Reference implementation for monorepo usage.
 
 - **[Svelte Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/svelte-demo)**: Reference implementation for Svelte 5 + Tailwind CSS.
 
