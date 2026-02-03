@@ -8,6 +8,7 @@ A powerful, framework-agnostic QR code layout engine for designing and printing 
 >
 - **[ React Live Demo](https://qr-layout-designer.netlify.app/)**
 - **[ Svelte Live Demo](https://qr-layout-designer-svelte.netlify.app/)**
+- **[ Vue Live Demo](https://qr-layout-designer-vue.netlify.app/)**
 
 
 ## Features
@@ -27,6 +28,8 @@ QR code, qrcode, qr-code, layout, sticker, label, generator, renderer, PDF, ZPL,
 - **[React Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/react-demo)**: Reference implementation for monorepo usage.
 
 - **[Svelte Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/svelte-demo)**: Reference implementation for Svelte 5 + Tailwind CSS.
+
+- **[Vue Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/vue-demo)**: Reference implementation for Vue + Tailwind CSS.
 
 ## Installation
 

@@ -1,6 +1,6 @@
 {
   "name": "qrlayout-ui",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Visual designer and UI components for QR layout generation",
   "keywords": [
     "qr",
@@ -55,7 +55,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "qrlayout-core": "^1.1.0"
+    "qrlayout-core": "^1.1.1"
   },
   "devDependencies": {
     "typescript": "^5.3.3",
