@@ -3,7 +3,7 @@ import { Plus, X, Printer, FileText, Image as ImageIcon, Info } from 'lucide-rea
 import { storage, type Machine } from '../../services/storage';
 import { Table, type Column } from '../../components/Table';
 import { StickerPrinter } from 'qrlayout-core';
-import { exportToPDF } from 'qrlayout-core/pdf';
+import { exportToPNG, exportToBatchPDF, exportToZPLFile } from '../../services/exportUtils';
 import type { StickerLayout } from 'qrlayout-ui';
 
 export function MachineMaster() {
@@ -92,44 +92,40 @@ export function MachineMaster() {
     const handleExportPNG = async () => {
         const layout = getActiveLayout();
         const selected = getSelectedMachines();
-        if (!layout || selected.length === 0) return;
+        if (!layout) return;
 
-        for (const machine of selected) {
-            const dataUrl = await printer.current.renderToDataURL(layout, machine as any, { format: 'png' });
-
-            const link = document.createElement('a');
-            link.download = `${machine.machineName}-label.png`;
-            link.href = dataUrl;
-            link.click();
-        }
+        await exportToPNG({
+            layout,
+            items: selected,
+            printer: printer.current,
+            baseFilename: 'machine-label'
+        });
     };
 
     const handleExportPDF = async () => {
         const layout = getActiveLayout();
         const selected = getSelectedMachines();
-        if (!layout || selected.length === 0) return;
+        if (!layout) return;
 
-        const pdf = await exportToPDF(layout, selected as any[]);
-        pdf.save(`batch-machine-labels-${Date.now()}.pdf`);
+        await exportToBatchPDF({
+            layout,
+            items: selected,
+            printer: printer.current,
+            baseFilename: 'batch-machine-labels'
+        });
     };
 
     const handleExportZPL = () => {
         const layout = getActiveLayout();
         const selected = getSelectedMachines();
-        if (!layout || selected.length === 0) return;
+        if (!layout) return;
 
-        const zplArray = printer.current.exportToZPL(layout, selected as any[]);
-        const zplContent = zplArray.join('\n');
-
-        console.log('ZPL Code generated:', zplContent);
-
-        // Download ZPL txt
-        const blob = new Blob([zplContent], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `batch-machine-labels.zpl`;
-        link.click();
+        exportToZPLFile({
+            layout,
+            items: selected,
+            printer: printer.current,
+            baseFilename: 'batch-machine-labels'
+        });
     };
 
     const columns: Column<Machine>[] = [
