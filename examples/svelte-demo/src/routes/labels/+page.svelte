@@ -46,7 +46,7 @@
         </div>
         <button
             onclick={handleCreateNew}
-            class="flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-sm hover:shadow-md active:scale-95 cursor-pointer"
+            class="flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-sm hover:shadow-md active:scale-95 cursor-pointer"
         >
             <Plus size={20} />
             <span>Create New Label</span>
@@ -64,7 +64,7 @@
         {#snippet cell(item, col)}
             {#if col.id === 'name'}
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center text-teal-600">
+                    <div class="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600">
                         <Layout size={20} />
                     </div>
                     <div class="font-semibold text-gray-900">{item.name}</div>

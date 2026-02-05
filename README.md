@@ -11,9 +11,8 @@
 
 **[Svelte Live Demo ](https://qr-layout-designer-svelte.netlify.app/)** (Showcasing both `qrlayout-core` & `qrlayout-ui`)
 
-- **[ Vue Live Demo](https://qr-layout-designer-vue.netlify.app/)**
+**[Vue Live Demo](https://qr-layout-designer-vue.netlify.app/)**
 
-**[View Live Demo (React)](https://qr-layout-design-react-demo.netlify.app/)**
 
 ![QR Layout Designer Screenshot](./assets/layout_designer.png)
 

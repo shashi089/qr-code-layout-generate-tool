@@ -111,7 +111,7 @@
 <div class="relative min-h-screen bg-white">
     <button
         onclick={handleBack}
-        class="fixed top-4 left-4 z-[9999] flex items-center gap-2 bg-white hover:bg-teal-50 text-gray-700 hover:text-teal-700 px-4 py-2 rounded-lg font-medium shadow-md transition-all border border-gray-200 hover:border-teal-200 cursor-pointer"
+        class="fixed top-4 left-4 z-[9999] flex items-center gap-2 bg-white hover:bg-orange-50 text-gray-700 hover:text-orange-700 px-4 py-2 rounded-lg font-medium shadow-md transition-all border border-gray-200 hover:border-orange-200 cursor-pointer"
     >
         <ArrowLeft size={18} />
         Back to Labels

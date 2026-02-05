@@ -78,7 +78,7 @@
                         <th class="px-6 py-4 w-12">
                             <input
                                 type="checkbox"
-                                class="w-4 h-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500 cursor-pointer transition-colors"
+                                class="w-4 h-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500 cursor-pointer transition-colors"
                                 checked={isAllSelected}
                                 use:indeterminate={isIndeterminate}
                                 onchange={handleSelectAll}
@@ -101,12 +101,12 @@
                 {#each data as item (String(item[keyField]))}
                     {@const id = String(item[keyField])}
                     {@const isSelected = selectedIds?.includes(id)}
-                    <tr class="group transition-all duration-200 hover:bg-gray-50/60 {isSelected ? 'bg-teal-50/40 hover:bg-teal-50/60' : ''}">
+                    <tr class="group transition-all duration-200 hover:bg-gray-50/60 {isSelected ? 'bg-orange-50/40 hover:bg-orange-50/60' : ''}">
                         {#if isSelectionEnabled}
                             <td class="px-6 py-4">
                                 <input
                                     type="checkbox"
-                                    class="w-4 h-4 rounded border-gray-300 text-teal-600 focus:ring-teal-500 cursor-pointer transition-colors"
+                                    class="w-4 h-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500 cursor-pointer transition-colors"
                                     checked={isSelected}
                                     onchange={(e) => handleSelectRow(id, (e.target as HTMLInputElement).checked)}
                                 />
@@ -129,7 +129,7 @@
                                     {#if onEdit}
                                         <button
                                             onclick={() => onEdit(item)}
-                                            class="text-teal-600 hover:text-teal-900 p-1.5 rounded-lg hover:bg-teal-50 transition-colors cursor-pointer"
+                                            class="text-orange-600 hover:text-orange-900 p-1.5 rounded-lg hover:bg-orange-50 transition-colors cursor-pointer"
                                             title="Edit"
                                         >
                                             <Edit2 size={16} />

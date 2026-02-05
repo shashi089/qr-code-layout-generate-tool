@@ -4,7 +4,7 @@
     import { storage, type Employee } from '$lib/services/storage';
     import Table from '$lib/components/Table.svelte';
     import { StickerPrinter } from 'qrlayout-core';
-    import { exportToPDF } from 'qrlayout-core/pdf';
+    import { exportToPNG, exportToBatchPDF, exportToZPLFile } from '$lib/services/exportUtils';
     import type { StickerLayout } from 'qrlayout-ui';
 
     let employees = $state<Employee[]>([]);
@@ -90,44 +90,40 @@
     async function handleExportPNG() {
         const layout = getActiveLayout();
         const selected = getSelectedEmployees();
-        if (!layout || selected.length === 0) return;
+        if (!layout) return;
 
-        for (const emp of selected) {
-            const dataUrl = await printer.renderToDataURL(layout, emp as any, { format: 'png' });
-
-            const link = document.createElement('a');
-            link.download = `${emp.fullName}-badge.png`;
-            link.href = dataUrl;
-            link.click();
-        }
+        await exportToPNG({
+            layout,
+            items: selected,
+            printer,
+            baseFilename: 'employee-badge'
+        });
     }
 
     async function handleExportPDF() {
         const layout = getActiveLayout();
         const selected = getSelectedEmployees();
-        if (!layout || selected.length === 0) return;
+        if (!layout) return;
 
-        const pdf = await exportToPDF(layout, selected as any[]);
-        pdf.save(`batch-badges-${Date.now()}.pdf`);
+        await exportToBatchPDF({
+            layout,
+            items: selected,
+            printer,
+            baseFilename: 'batch-badges'
+        });
     }
 
     function handleExportZPL() {
         const layout = getActiveLayout();
         const selected = getSelectedEmployees();
-        if (!layout || selected.length === 0) return;
+        if (!layout) return;
 
-        const zplArray = printer.exportToZPL(layout, selected as any[]);
-        const zplContent = zplArray.join('\n');
-
-        console.log('ZPL Code generated:', zplContent);
-
-        // Download ZPL txt
-        const blob = new Blob([zplContent], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `batch-badges.zpl`;
-        link.click();
+        exportToZPLFile({
+            layout,
+            items: selected,
+            printer,
+            baseFilename: 'batch-badges'
+        });
     }
 
     const columns = [
@@ -153,7 +149,7 @@
             <!-- Layout Selector -->
             <div class="relative">
                 <select
-                    class="appearance-none bg-white border border-gray-300 text-gray-700 py-2 pl-4 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm cursor-pointer"
+                    class="appearance-none bg-white border border-gray-300 text-gray-700 py-2 pl-4 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent shadow-sm cursor-pointer"
                     bind:value={selectedLayoutId}
                 >
                     <option value="" disabled>Select Layout Template</option>
@@ -168,7 +164,7 @@
 
             <button
                 onclick={() => handleOpenModal()}
-                class="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm cursor-pointer"
+                class="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm cursor-pointer"
             >
                 <Plus size={18} />
                 <span class="hidden sm:inline">Add Employee</span>
@@ -178,11 +174,11 @@
 
     <!-- Info Guide -->
     {#if !hasSelection}
-        <div class="bg-teal-50 border border-teal-100 rounded-xl p-4 mb-6 flex items-start gap-3 animate-in fade-in">
-            <Info class="text-teal-600 shrink-0 mt-0.5" size={20} />
-            <div class="text-sm text-teal-900">
+        <div class="bg-orange-50 border border-orange-100 rounded-xl p-4 mb-6 flex items-start gap-3 animate-in fade-in">
+            <Info class="text-orange-600 shrink-0 mt-0.5" size={20} />
+            <div class="text-sm text-orange-900">
                 <p class="font-semibold">Batch Export Instructions:</p>
-                <ol class="list-decimal ml-4 mt-1 space-y-0.5 text-teal-800">
+                <ol class="list-decimal ml-4 mt-1 space-y-0.5 text-orange-800">
                     <li>Select a <strong>Layout Template</strong> from the dropdown above.</li>
                     <li>Check the box next to one or more employees in the table.</li>
                     <li>Click the appearing <strong>Export</strong> buttons (PNG, PDF, or ZPL) to generate badges.</li>
@@ -203,7 +199,7 @@
                 <button
                     onclick={handleExportPNG}
                     disabled={!hasLayout}
-                    class="flex items-center gap-2 bg-white text-gray-700 hover:text-teal-600 border border-gray-200 hover:border-teal-200 px-3 py-1.5 rounded-lg text-sm font-medium transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                    class="flex items-center gap-2 bg-white text-gray-700 hover:text-orange-600 border border-gray-200 hover:border-orange-200 px-3 py-1.5 rounded-lg text-sm font-medium transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     title="Download as PNG Images"
                 >
                     <ImageIcon size={16} />
@@ -264,7 +260,7 @@
                         <input
                             type="text"
                             required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all"
                             bind:value={formData.fullName}
                             placeholder="e.g. Kashinath Hosapeti"
                         />
@@ -275,7 +271,7 @@
                         <input
                             type="text"
                             required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all"
                             bind:value={formData.employeeId}
                             placeholder="e.g. EMP-001"
                         />
@@ -285,7 +281,7 @@
                         <label class="block text-sm font-medium text-gray-700">Department</label>
                         <input
                             type="text"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all"
                             bind:value={formData.department}
                             placeholder="e.g. Engineering"
                         />
@@ -295,7 +291,7 @@
                         <label class="block text-sm font-medium text-gray-700">Join Date</label>
                         <input
                             type="date"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all"
                             bind:value={formData.joinDate}
                         />
                     </div>
@@ -311,7 +307,7 @@
                         </button>
                         <button
                             type="submit"
-                            class="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-medium shadow-sm transition-colors cursor-pointer"
+                            class="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 font-medium shadow-sm transition-colors cursor-pointer"
                         >
                             Save Changes
                         </button>
