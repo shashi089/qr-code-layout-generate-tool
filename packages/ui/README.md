@@ -79,7 +79,7 @@ const designer = new QRLayoutDesigner({
                 { name: "name", label: "Full Name" },
                 { name: "id", label: "Employee ID" }
             ],
-            sampleData: { name: "Vishal Naik", id: "12345" } // Used for preview
+            sampleData: { name: "Mallikarjun Naik", id: "12345" } // Used for preview
         }
     },
 

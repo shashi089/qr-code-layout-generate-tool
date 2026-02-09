@@ -7,7 +7,7 @@
 [![npm version](https://img.shields.io/npm/v/qrlayout-ui.svg?label=qrlayout-ui)](https://www.npmjs.com/package/qrlayout-ui)
 [![Typescript](https://img.shields.io/badge/TypeScript-Enabled-blue.svg)](https://www.typescriptlang.org/)
 
-Showcasing both `qrlayout-core` & `qrlayout-ui`
+Live demos of `qrlayout-core` & `qrlayout-ui` built with React, Svelte, and Vue
 
 **[React Live Demo ](https://qr-layout-designer.netlify.app/)** 
 

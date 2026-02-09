@@ -71,7 +71,7 @@ const myLayout: StickerLayout = {
         id: "qr-code", 
         type: "qr", 
         x: 70, y: 20, w: 25, h: 25, 
-        content: "{{visitorId}}" // Placeholder
+        content: "{{visitorId}} {{name}}" // Placeholder
     }
   ]
 };
