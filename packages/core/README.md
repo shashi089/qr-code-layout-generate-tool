@@ -20,7 +20,7 @@ A powerful, framework-agnostic QR code layout engine for designing and printing 
 
 ## Keywords
 
-QR code, qrcode, qr-code, layout, sticker, label, generator, renderer, PDF, ZPL, barcode, thermal printer.
+`qr-code`, `zpl`, `pdf`, `barcode-rendering`, `thermal-printer`, `headless`, `batch-printing`, `zebra-printer`
 
 ## Live Demo & Examples
 

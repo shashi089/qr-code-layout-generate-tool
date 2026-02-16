@@ -13,10 +13,18 @@ Live demos of `qrlayout-core` & `qrlayout-ui` built with React, Svelte, and Vue
 
 **[Svelte Live Demo ](https://qr-layout-designer-svelte.netlify.app/)**
 
-**[Vue Live Demo](https://qr-layout-designer-vue.netlify.app/)**
-
-
 ![QR Layout Designer Screenshot](./assets/layout_designer.png)
+
+## Tech Stack
+
+<p align="left">
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/Svelte-FF3E00?style=for-the-badge&logo=svelte&logoColor=white" alt="Svelte" />
+  <img src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D" alt="Vue" />
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind" />
+</p>
 
 ---
 

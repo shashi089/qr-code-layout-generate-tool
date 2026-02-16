@@ -1,6 +1,19 @@
 {
   "name": "qr-layout-workspace",
   "private": true,
+  "description": "Monorepo for QR Layout Tool - A professional-grade engine for designing and printing QR code layouts.",
+  "keywords": [
+    "qr-code",
+    "layout-designer",
+    "sticker-printer",
+    "zpl",
+    "pdf-generation",
+    "react",
+    "svelte",
+    "vue",
+    "typescript",
+    "low-code"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
