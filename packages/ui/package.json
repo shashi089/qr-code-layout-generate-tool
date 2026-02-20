@@ -5,16 +5,21 @@
   "keywords": [
     "qr-code",
     "qr-layout",
+    "qr-layout-designer",
     "react-qrcode",
     "vue-qrcode",
     "svelte-qrcode",
     "angular-qrcode",
     "drag-drop",
+    "drag-and-drop",
     "ui-component",
     "low-code",
     "visual-editor",
     "label-designer",
-    "qr-layout-designer"
+    "label-printing",
+    "sticker-designer",
+    "typescript",
+    "framework-agnostic"
   ],
   "author": "Shashidhar Naik <shashidharnaik8@gmail.com>",
   "license": "MIT",
@@ -26,7 +31,9 @@
   "private": false,
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "main": "./dist/qrlayout-ui.umd.js",
   "module": "./dist/qrlayout-ui.js",

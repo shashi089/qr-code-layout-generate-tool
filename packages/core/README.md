@@ -1,167 +1,126 @@
 # qrlayout-core
 
-A powerful, framework-agnostic QR code layout engine for designing and printing QR code stickers and labels. Create pixel-perfect layouts with text and QR codes, and export them to **PNG**, **PDF**, or **ZPL** (Zebra Programming Language).
+A high-performance, framework-agnostic QR code layout engine designed for professional sticker and label generation. Create pixel-perfect layouts with text, QR codes, and dynamic data, with native support for **PNG**, **PDF**, and **ZPL** (Zebra Programming Language).
 
-> [!NOTE]
-> This package is the core rendering engine. For a visual drag-and-drop designer, check out **[qrlayout-ui](../ui/README.md)**.
-> It is a **Framework-Agnostic** embeddable UI component that works with **React, Vue, Angular, Svelte, and Vanilla JS**.
->
-- **[ React Live Demo](https://qr-layout-designer.netlify.app/)**
-- **[ Svelte Live Demo](https://qr-layout-designer-svelte.netlify.app/)**
-- **[ Vue Live Demo](https://qr-layout-designer-vue.netlify.app/)**
+> [!TIP]
+> This package contains the headless rendering logic. For an interactive visual designer, use **[`qrlayout-ui`](../ui/README.md)**.
+> It works seamlessly across **React, Vue, Angular, Svelte, and Vanilla JS**.
 
+## 🚀 Live Demos & Examples
 
-## Features
+| Framework | Live Demo | Source Code |
+| :--- | :--- | :--- |
+| **React** | [Live Demo](https://qr-layout-designer.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/react-demo) |
+| **Svelte 5** | [Live Demo](https://qr-layout-designer-svelte.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/svelte-demo) |
+| **Vue 3** | [Live Demo](https://qr-layout-designer-vue.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/vue-demo) |
 
--  **Precise Layouts**: Define stickers in `mm`, `cm`, `in`, or `px`.
--  **Multiple Formats**: Export to Canvas (preview), PNG/JPEG (image), PDF (print), or ZPL (industrial thermal printers).
--  **Dynamic Content**: Use variable placeholders (e.g., `{{name}}`, `{{visitorId}}`) to batch generate unique stickers.
--  **Lightweight**: Minimal dependencies. PDF export is optional to keep bundle size small.
+## ✨ Core Features
 
-## Keywords
+- **Industrial Precision**: Define layouts in `mm`, `cm`, `in`, or `px`.
+- **ZPL Support**: Direct export to Zebra Programming Language for thermal printers.
+- **Batched Processing**: Generate thousands of unique labels from a single template using dynamic data binding.
+- **Hardware Agnostic**: Renders to Canvas (Browser), Buffer (Node.js), or professional document formats.
 
-`qr-code`, `zpl`, `pdf`, `barcode-rendering`, `thermal-printer`, `headless`, `batch-printing`, `zebra-printer`
-
-## Live Demo & Examples
-
-- **[Interactive Demo](https://qr-layout-designer.netlify.app/)**: A full-featured designer built with `qrlayout-core` and `qrlayout-ui`.
-- **[React Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/react-demo)**: Reference implementation for monorepo usage.
-
-- **[Svelte Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/svelte-demo)**: Reference implementation for Svelte 5 + Tailwind CSS.
-
-- **[Vue Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/vue-demo)**: Reference implementation for Vue + Tailwind CSS.
-
-## Installation
+## 📦 Installation
 
 ```bash
 npm install qrlayout-core
 ```
 
-## Quick Start
+## ⌨️ Quick Start
 
-### 1. Define a Layout
+### 1. Define a Template
+A layout is a robust JSON schema defining dimensions and elements.
 
-A layout is a JSON object describing the sticker dimensions and elements.
-
-```ts
+```typescript
 import { type StickerLayout } from "qrlayout-core";
 
-const myLayout: StickerLayout = {
-  id: "badge-layout",
-  name: "Conference Badge",
-  width: 100, // 100mm width
-  height: 60, // 60mm height
+const template: StickerLayout = {
+  id: "asset-tag",
+  name: "Asset Label",
+  width: 100, 
+  height: 60,
   unit: "mm",
   elements: [
     { 
-        id: "title", 
+        id: "header", 
         type: "text", 
         x: 0, y: 5, w: 100, h: 10, 
-        content: "VISITOR PASS",
+        content: "PROPERTY OF CORP",
         style: { fontSize: 14, fontWeight: "bold", textAlign: "center" }
     },
     { 
-        id: "name", 
-        type: "text", 
-        x: 5, y: 25, w: 60, h: 10, 
-        content: "{{name}}", // Placeholder
-        style: { fontSize: 12 }
-    },
-    { 
-        id: "qr-code", 
+        id: "id-qr", 
         type: "qr", 
-        x: 70, y: 20, w: 25, h: 25, 
-        content: "{{visitorId}} {{name}}" // Placeholder
+        x: 35, y: 20, w: 30, h: 30, 
+        content: "{{assetId}}" 
     }
   ]
 };
 ```
 
-### 2. Render or Export
+### 2. Generate Output
+Use the `StickerPrinter` to render the template with real data.
 
-Pass data to the `StickerPrinter` to generate outputs.
-
-```ts
+```typescript
 import { StickerPrinter } from "qrlayout-core";
 
-// Data to fill placeholders
-const data = { 
-    name: "Priyanka Verma", 
-    visitorId: "https://example.com/visitors/priyanka" 
-};
-
 const printer = new StickerPrinter();
+const data = { assetId: "https://audit.co/ID-9921" };
 
-// --- Option A: Render to HTML Canvas (Browser) ---
-const canvas = document.querySelector("#preview") as HTMLCanvasElement;
-await printer.renderToCanvas(myLayout, data, canvas);
+// Render to Canvas for UI preview
+await printer.renderToCanvas(template, data, myCanvasElement);
 
-// --- Option B: Get an Image URL (PNG) ---
-const imageUrl = await printer.renderToDataURL(myLayout, data, { format: "png", dpi: 300 });
-console.log(imageUrl); // "data:image/png;base64,..."
-
-// --- Option C: Generate ZPL for Thermal Printers ---
-const zplCommands = printer.exportToZPL(myLayout, [data]);
-console.log(zplCommands[0]); // "^XA^FO..."
-
+// Export to ZPL for thermal printing
+const [zpl] = printer.exportToZPL(template, [data]);
 ```
 
-## PDF Export (Optional)
+## 📄 PDF Support (Optional)
 
-To enable PDF export, you must install `jspdf`. This is an optional peer dependency to prevent bloating the core library for users who don't need PDF support.
-
-### 1. Install jspdf
+PDF export is provided as an optional module to keep the core bundle lightweight.
 
 ```bash
 npm install jspdf
 ```
 
-### 2. Use the PDF Module
-
-```ts
+```typescript
 import { exportToPDF } from "qrlayout-core/pdf";
 
-// Generate a PDF with multiple stickers (e.g., standard A4 sheet logic can be handled by caller, 
-// this function currently outputs one page per sticker or as configured).
-const pdfDoc = await exportToPDF(myLayout, [data, data2, data3]);
-
-// Save the PDF
-pdfDoc.save("badges.pdf");
+const pdf = await exportToPDF(template, [data1, data2]);
+pdf.save("labels.pdf");
 ```
 
-## API Reference
+## 📖 API Specification
 
-### `StickerLayout` Interface
+### `StickerLayout` Attributes
 
-| Property | Type | Description |
-|----------|------|-------------|
+| Attribute | Type | Description |
+|---|---|---|
 | `id` | `string` | Unique identifier for the layout. |
-| `name` | `string` | Human-readable name of the layout. |
-| `width` | `number` | Width of the sticker. |
-| `height` | `number` | Height of the sticker. |
-| `unit` | `"mm" \| "cm" \| "in" \| "px"` | Unit of measurement. |
-| `elements` | `StickerElement[]` | List of items on the sticker. |
-| `backgroundColor` | `string` | (Optional) Background color hex. |
+| `name` | `string` | Human-readable label name. |
+| `width`, `height` | `number` | Physical dimensions. |
+| `unit` | `mm \| cm \| in \| px` | Unit of measure. |
+| `elements` | `StickerElement[]` | Array of visual components. |
+| `backgroundColor` | `string` | (Optional) Background fill color hex. |
 | `backgroundImage` | `string` | (Optional) Background image URL. |
 
-### `StickerElement` Interface
+### `StickerElement` Attributes
 
-| Property | Type | Description |
-|----------|------|-------------|
+| Attribute | Type | Description |
+|---|---|---|
 | `id` | `string` | Unique identifier for the element. |
-| `type` | `"text" \| "qr"` | Type of element. |
-| `x`, `y` | `number` | Position from top-left. |
-| `w`, `h` | `number` | Width and height. |
-| `content` | `string` | Text, URL, source. Supports `{{key}}` syntax. |
-| `qrSeparator` | `string` | (Optional) Separator used to join consecutive `{{variables}}` (e.g., `|`, `,`). |
-| `style.fontFamily` | `string` | Font family (e.g., 'sans-serif', 'Inter'). |
-| `style.fontSize` | `number` | Font size (px). |
-| `style.fontWeight` | `string \| number` | Font weight (e.g., 'bold', 700). |
-| `style.textAlign` | `"left" \| "center" \| "right"` | Horizontal alignment. |
-| `style.verticalAlign` | `"top" \| "middle" \| "bottom"` | Vertical alignment. |
-| `style.color` | `string` | Text color hex code. |
-| `style.backgroundColor` | `string` | Background color for the element. |
+| `type` | `text \| qr` | Component type. |
+| `content` | `string` | Text content or template (e.g. `{{name}}`). |
+| `x`, `y`, `w`, `h` | `number` | Position and size (top-left origin). |
+| `qrSeparator` | `string` | Separator for joining consecutive `{{variables}}`. |
+| `style.fontFamily` | `string` | Font family (e.g. `'Inter'`, `'sans-serif'`). |
+| `style.fontSize` | `number` | Font size in pixels. |
+| `style.fontWeight` | `string \| number` | Font weight (e.g. `'bold'`, `700`). |
+| `style.textAlign` | `left \| center \| right` | Horizontal text alignment. |
+| `style.verticalAlign` | `top \| middle \| bottom` | Vertical text alignment. |
+| `style.color` | `string` | Text color hex. |
+| `style.backgroundColor` | `string` | Element background color hex. |
 
-## License
+## 📄 License
 
 MIT

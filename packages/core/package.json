@@ -4,6 +4,7 @@
   "description": "Headless rendering engine for QR code layouts, supporting ZPL, PDF, and Canvas.",
   "keywords": [
     "qr-code",
+    "qr-layout",
     "zpl",
     "pdf",
     "qrcode-rendering",
@@ -12,7 +13,12 @@
     "batch-printing",
     "zebra-printer",
     "label-printing",
-    "qr-label"
+    "qr-label",
+    "sticker-printing",
+    "barcode",
+    "typescript",
+    "nodejs",
+    "canvas-rendering"
   ],
   "author": "Shashidhar Naik <shashidharnaik8@gmail.com>",
   "license": "MIT",

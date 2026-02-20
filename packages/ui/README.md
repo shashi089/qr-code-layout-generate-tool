@@ -2,15 +2,13 @@
 
 A framework-agnostic, embeddable UI for designing sticker layouts with QR codes. Part of the [QR Layout Tool](https://github.com/shashi089/qr-code-layout-generate-tool).
 
-- **[ React Live Demo](https://qr-layout-designer.netlify.app/)**
-- **[ Svelte Live Demo](https://qr-layout-designer-svelte.netlify.app/)**
-- **[ Vue Live Demo](https://qr-layout-designer-vue.netlify.app/)**
+## 🚀 Live Demos & Examples
 
-- **[React Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/react-demo)**: Reference implementation for monorepo usage.
-
-- **[Svelte Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/svelte-demo)**: Reference implementation for Svelte 5 + Tailwind CSS.
-
-- **[Vue Demo Source Code](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/vue-demo)**: Reference implementation for Vue + Tailwind CSS.
+| Framework | Live Demo | Source Code |
+| :--- | :--- | :--- |
+| **React** | [Live Demo](https://qr-layout-designer.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/react-demo) |
+| **Svelte 5** | [Live Demo](https://qr-layout-designer-svelte.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/svelte-demo) |
+| **Vue 3** | [Live Demo](https://qr-layout-designer-vue.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/vue-demo) |
 
 ![QR Layout Designer Screenshot](https://github.com/shashi089/qr-code-layout-generate-tool/raw/main/assets/layout_designer.png)
 
@@ -102,9 +100,9 @@ const designer = new QRLayoutDesigner({
 });
 ```
 
-### 3. Cleanup
+### 4. Cleanup
 
-When unmounting your component (e.g., in React's `useEffect` return or Vue's `onUnmounted`):
+Destroy the instance when the component unmounts to prevent memory leaks:
 
 ```javascript
 designer.destroy();
@@ -115,9 +113,9 @@ designer.destroy();
 | Option | Type | Description |
 |---|---|---|
 | `element` | `HTMLElement` | **Required**. The DOM element to mount the designer into. |
-| `entitySchemas` | `Record<string, Schema>` | Definitions for data entities. Allows users to pick fields (like `{{name}}`) to bind to text/QR elements. |
-| `initialLayout` | `StickerLayout` | The initial layout state to load. |
-| `onSave` | `(layout) => void` | Callback triggered when the "Save Layout" button is clicked. |
+| `entitySchemas` | `Record<string, Schema>` | Data entity definitions for `{{field}}` placeholder binding. |
+| `initialLayout` | `StickerLayout` | The initial layout state to load on mount. |
+| `onSave` | `(layout: StickerLayout) => void` | Callback triggered when the "Save Layout" button is clicked. |
 
 ## Integration Examples
 
