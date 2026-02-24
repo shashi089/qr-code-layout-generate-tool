@@ -1,6 +1,6 @@
 {
   "name": "qrlayout-core",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Headless rendering engine for QR code layouts, supporting ZPL, PDF, and Canvas.",
   "keywords": [
     "qr-code",

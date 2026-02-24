@@ -1,6 +1,6 @@
 {
   "name": "qrlayout-ui",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A framework-agnostic visual designer UI for QR code and label layouts.",
   "keywords": [
     "qr-code",
