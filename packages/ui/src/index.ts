@@ -33,6 +33,7 @@ export class QRLayoutDesigner {
     private selectedElementId: string | null = null;
     private isDarkMode = false;
     private pxPerUnit = 1;
+    private isDragging = false;
     private printer: StickerPrinter;
     private onSaveCallback?: (layout: StickerLayout) => void;
 
@@ -384,10 +385,15 @@ export class QRLayoutDesigner {
             ? this.entitySchemas[this.currentLayout.targetEntity].sampleData
             : {};
 
-        await this.printer.renderToCanvas(this.currentLayout, sampleData, this.canvas);
-
-        const rect = this.canvas.getBoundingClientRect();
-        this.pxPerUnit = rect.width / this.currentLayout.width;
+        // renderToCanvas resets canvas.width/height which triggers a browser reflow.
+        // Skipping it during drag prevents other elements from shaking.
+        if (!this.isDragging) {
+            await this.printer.renderToCanvas(this.currentLayout, sampleData, this.canvas);
+            const rect = this.canvas.getBoundingClientRect();
+            if (rect.width > 0 && this.currentLayout.width > 0) {
+                this.pxPerUnit = rect.width / this.currentLayout.width;
+            }
+        }
 
         this.updateEditorOverlay();
     }
@@ -622,40 +628,59 @@ export class QRLayoutDesigner {
 
     private updateEditorOverlay() {
         if (!this.editorOverlay || !this.canvas) return;
-        this.editorOverlay.style.width = this.canvas.style.width;
-        this.editorOverlay.style.height = this.canvas.style.height;
-        this.editorOverlay.innerHTML = "";
+
+        // Only update overlay dimensions when not dragging (canvas size is stable)
+        if (!this.isDragging) {
+            this.editorOverlay.style.width = this.canvas.style.width;
+            this.editorOverlay.style.height = this.canvas.style.height;
+        }
+
+        // Reconcile DOM: remove stale items, keep existing ones
+        const existingIds = new Set(this.currentLayout.elements.map(e => e.id));
+        this.editorOverlay.querySelectorAll('.editor-item').forEach(node => {
+            if (!existingIds.has((node as HTMLElement).dataset.id!)) node.remove();
+        });
 
         this.currentLayout.elements.forEach(el => {
-            const item = document.createElement("div");
-            item.className = `editor-item ${this.selectedElementId === el.id ? "selected" : ""}`;
+            let item = this.editorOverlay.querySelector(`.editor-item[data-id="${el.id}"]`) as HTMLElement | null;
+
+            if (!item) {
+                // Create once, attach listeners once
+                item = document.createElement("div");
+                item.className = "editor-item";
+                item.dataset.id = el.id;
+
+                const handle = document.createElement("div");
+                handle.className = "resize-handle";
+                item.appendChild(handle);
+
+                handle.onmousedown = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.startElementResize(e, el, item!);
+                };
+
+                item.onmousedown = (e) => {
+                    if ((e.target as HTMLElement).classList.contains('resize-handle')) return;
+                    e.preventDefault();
+                    this.selectElement(el.id);
+                    this.startElementDrag(e, el, item!);
+                };
+
+                this.editorOverlay.appendChild(item);
+            }
+
+            // Sync state
+            item.classList.toggle("selected", this.selectedElementId === el.id);
             item.style.left = `${el.x * this.pxPerUnit}px`;
             item.style.top = `${el.y * this.pxPerUnit}px`;
             item.style.width = `${el.w * this.pxPerUnit}px`;
             item.style.height = `${el.h * this.pxPerUnit}px`;
-
-            if (this.selectedElementId === el.id) {
-                const handle = document.createElement("div");
-                handle.className = "resize-handle";
-                handle.onmousedown = (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.startElementResize(e, el);
-                };
-                item.appendChild(handle);
-            }
-
-            item.onmousedown = (e) => {
-                e.preventDefault();
-                this.selectElement(el.id);
-                this.startElementDrag(e, el);
-            };
-
-            this.editorOverlay.appendChild(item);
         });
     }
 
-    private startElementResize(e: MouseEvent, el: StickerElement) {
+    private startElementResize(e: MouseEvent, el: StickerElement, item: HTMLElement) {
+        this.isDragging = true;
         const startX = e.clientX;
         const startY = e.clientY;
         const initW = el.w;
@@ -664,10 +689,16 @@ export class QRLayoutDesigner {
         const onMove = (me: MouseEvent) => {
             el.w = Math.max(1, initW + (me.clientX - startX) / this.pxPerUnit);
             el.h = Math.max(1, initH + (me.clientY - startY) / this.pxPerUnit);
-            this.updatePreview();
+            // Only update THIS element's box — no canvas reset, no other elements affected
+            item.style.width = `${el.w * this.pxPerUnit}px`;
+            item.style.height = `${el.h * this.pxPerUnit}px`;
             this.renderPropertyPanel();
         };
         const onUp = () => {
+            this.isDragging = false;
+            // Full canvas re-render only after drag ends
+            this.updatePreview();
+            this.renderPropertyPanel();
             window.removeEventListener("mousemove", onMove);
             window.removeEventListener("mouseup", onUp);
         };
@@ -675,7 +706,8 @@ export class QRLayoutDesigner {
         window.addEventListener("mouseup", onUp);
     }
 
-    private startElementDrag(e: MouseEvent, el: StickerElement) {
+    private startElementDrag(e: MouseEvent, el: StickerElement, item: HTMLElement) {
+        this.isDragging = true;
         const startX = e.clientX;
         const startY = e.clientY;
         const initX = el.x;
@@ -684,10 +716,16 @@ export class QRLayoutDesigner {
         const onMove = (me: MouseEvent) => {
             el.x = initX + (me.clientX - startX) / this.pxPerUnit;
             el.y = initY + (me.clientY - startY) / this.pxPerUnit;
-            this.updatePreview();
+            // Only update THIS element's box — no canvas reset, no other elements affected
+            item.style.left = `${el.x * this.pxPerUnit}px`;
+            item.style.top = `${el.y * this.pxPerUnit}px`;
             this.renderPropertyPanel();
         };
         const onUp = () => {
+            this.isDragging = false;
+            // Full canvas re-render only after drag ends
+            this.updatePreview();
+            this.renderPropertyPanel();
             window.removeEventListener("mousemove", onMove);
             window.removeEventListener("mouseup", onUp);
         };
