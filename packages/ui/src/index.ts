@@ -45,6 +45,7 @@ export class QRLayoutDesigner {
     private propContent!: HTMLDivElement;
     private leftSidebar!: HTMLElement;
     private rightSidebar!: HTMLElement;
+    private sampleDataContainer!: HTMLDivElement;
 
     // Inputs
     private inputs!: {
@@ -57,6 +58,7 @@ export class QRLayoutDesigner {
         labelHeight: HTMLLabelElement;
         bg: HTMLInputElement;
         bgPreview: HTMLDivElement;
+        sampleData: HTMLDivElement;
     };
 
     constructor(options: DesignerOptions) {
@@ -86,6 +88,7 @@ export class QRLayoutDesigner {
         this.renderEntityOptions(); // New method to populate select
         this.syncInputsFromLayout();
         this.bindEvents();
+        this.renderSampleDataEditor();
         this.renderElementsList();
         this.updatePreview();
     }
@@ -160,6 +163,14 @@ export class QRLayoutDesigner {
                         </div>
                         <div data-el="elements-container" class="element-list" style="margin-top: 8px;"></div>
                     </div>
+
+                    <!-- Sample Data Trigger -->
+                    <div class="sidebar-section" style="margin-top: auto; border-top: 1px solid var(--border-color); border-bottom: none;">
+                        <button class="btn btn-outline btn-block" data-action="edit-sample-data" style="gap: 10px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h2"/><path d="M8 17h2"/><path d="M14 13h2"/><path d="M14 17h2"/></svg>
+                            Edit Sample Data
+                        </button>
+                    </div>
                 </aside>
 
                 <!-- CENTER: CANVAS -->
@@ -181,6 +192,25 @@ export class QRLayoutDesigner {
                         <button class="btn btn-danger btn-block" data-action="delete-element" style="margin-top: 24px">Delete Element</button>
                     </div>
                 </aside>
+            </div>
+        </div>
+
+        <!-- MODAL FOR SAMPLE DATA -->
+        <div class="modal-overlay" data-el="sample-data-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Edit Sample Data</h3>
+                    <button class="btn-close" data-action="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size: 0.8125rem; color: var(--text-secondary); margin-bottom: 20px;">
+                        Update the values below to see how they appear on your layout in real-time.
+                    </p>
+                    <div data-el="sample-data-container" class="sample-data-grid"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-action="close-modal">Done Editing</button>
+                </div>
             </div>
         </div>
         `;
@@ -207,8 +237,10 @@ export class QRLayoutDesigner {
             labelWidth: q('[data-label="width"]') as HTMLLabelElement,
             labelHeight: q('[data-label="height"]') as HTMLLabelElement,
             bg: qi('bg'),
-            bgPreview: q('[data-el="bg-preview"]') as HTMLDivElement
+            bgPreview: q('[data-el="bg-preview"]') as HTMLDivElement,
+            sampleData: q('[data-el="sample-data-container"]') as HTMLDivElement
         };
+        this.sampleDataContainer = this.inputs.sampleData;
     }
 
     private renderEntityOptions() {
@@ -272,6 +304,16 @@ export class QRLayoutDesigner {
             }
         });
 
+        this.container.querySelector('[data-action="edit-sample-data"]')?.addEventListener('click', () => {
+            this.showSampleDataModal();
+        });
+
+        this.container.querySelectorAll('[data-action="close-modal"]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.container.querySelector('[data-el="sample-data-modal"]')?.classList.remove('show');
+            });
+        });
+
         // Sidebar Toggles
         this.container.querySelector('#toggle-left')?.addEventListener('click', () => {
             this.leftSidebar.classList.toggle("show");
@@ -284,6 +326,7 @@ export class QRLayoutDesigner {
         // Layout Inputs
         this.inputs.entity.onchange = (e) => {
             this.currentLayout.targetEntity = (e.target as HTMLSelectElement).value;
+            this.renderSampleDataEditor();
             this.renderPropertyPanel();
             this.updatePreview();
         };
@@ -347,6 +390,63 @@ export class QRLayoutDesigner {
         this.pxPerUnit = rect.width / this.currentLayout.width;
 
         this.updateEditorOverlay();
+    }
+
+    private showSampleDataModal() {
+        this.renderSampleDataEditor();
+        this.container.querySelector('[data-el="sample-data-modal"]')?.classList.add('show');
+    }
+
+    private renderSampleDataEditor() {
+        if (!this.sampleDataContainer) return;
+
+        const entity = this.currentLayout.targetEntity;
+        if (!entity || !this.entitySchemas[entity]) {
+            this.sampleDataContainer.innerHTML = `
+                <div style="font-size: 0.75rem; color: var(--text-secondary); padding: 12px; background: var(--panel-bg-alt); border-radius: 8px; border: 1px dashed var(--border-color); text-align: center; display: flex; flex-direction: column; gap: 8px; align-items: center;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5;"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>Select an entity above to see fields</span>
+                </div>
+            `;
+            return;
+        }
+
+        const schema = this.entitySchemas[entity];
+        this.sampleDataContainer.innerHTML = "";
+
+        const grid = document.createElement("div");
+        grid.className = "sample-data-grid-container";
+
+        schema.fields.forEach(field => {
+            const group = document.createElement("div");
+            group.className = "form-group";
+            group.style.margin = "0";
+
+            const label = document.createElement("label");
+            label.style.display = "flex";
+            label.style.justifyContent = "space-between";
+            label.innerHTML = `
+                <span>${field.label || field.name}</span>
+                <code style="font-size: 0.625rem; opacity: 0.6; background: var(--panel-bg-alt); padding: 1px 4px; border-radius: 3px;">{{${field.name}}}</code>
+            `;
+
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = schema.sampleData[field.name] || "";
+            input.placeholder = `Enter sample ${field.name}...`;
+            input.style.fontSize = "0.8125rem";
+
+            input.oninput = (e) => {
+                schema.sampleData[field.name] = (e.target as HTMLInputElement).value;
+                this.updatePreview();
+            };
+
+            group.appendChild(label);
+            group.appendChild(input);
+            grid.appendChild(group);
+        });
+
+        this.sampleDataContainer.appendChild(grid);
     }
 
     private renderElementsList() {

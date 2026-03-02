@@ -1,86 +1,123 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QR Layout Designer | Open Source Package</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    body,
-    html {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #f1f5f9;
-    }
-
-    #app {
-      width: 100%;
-      height: 100vh;
-    }
-  </style>
-</head>
-
-<body>
-  <div id="app"></div>
-
-  <script type="module">
-    import { QRLayoutDesigner } from "/src/index.ts";
-
-    // Example Entity Schemas
-    const schemas = {
-      employee: {
-        label: "Employee",
-        fields: [
-          { name: "name", label: "Full Name" },
-          { name: "employeeId", label: "Employee ID" },
-          { name: "designation", label: "Designation" },
-          { name: "place", label: "Location" }
-        ],
-        sampleData: { name: "Rajesh Sharma", employeeId: "EMP-101", designation: "Software Engineer", place: "Bengaluru" }
-      },
-      product: {
-        label: "Product",
-        fields: [
-          { name: "title", label: "Product Title" },
-          { name: "sku", label: "SKU Code" },
-          { name: "price", label: "Price" }
-        ],
-        sampleData: { title: "Wireless Mouse", sku: "WM-889", price: "$25.00" }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Layout Designer | Open Source Package</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #f1f5f9;
       }
-    };
 
-    // Example Initial Layout
-    const initialLayout = {
-      id: "layout-demo",
-      name: "Demo Badge",
-      targetEntity: "employee",
-      width: 100, // Number, not string
-      height: 60,
-      unit: "mm",
-      backgroundColor: "#ffffff",
-      elements: [
-        { id: "t1", type: "text", x: 5, y: 5, w: 90, h: 8, content: "EMPLOYEE ID", style: { textAlign: "center", fontWeight: "bold" } },
-        { id: "q1", type: "qr", x: 35, y: 15, w: 30, h: 30, content: "{{employeeId}}" },
-        { id: "t2", type: "text", x: 5, y: 48, w: 90, h: 8, content: "{{name}}", style: { textAlign: "center" } }
-      ]
-    };
-
-    const app = document.getElementById("app");
-    const designer = new QRLayoutDesigner({
-      element: app,
-      entitySchemas: schemas,
-      initialLayout: initialLayout,
-      onSave: (layout) => {
-        console.log("Saved Layout:", layout);
-        alert("Layout saved! Check console.");
+      #app {
+        width: 100%;
+        height: 100vh;
       }
-    });
-  </script>
-</body>
+    </style>
+  </head>
 
+  <body>
+    <div id="app"></div>
+
+    <script type="module">
+      import { QRLayoutDesigner } from "/src/index.ts";
+
+      // Example Entity Schemas
+      const schemas = {
+        employee: {
+          label: "Employee",
+          fields: [
+            { name: "name", label: "Full Name" },
+            { name: "employeeId", label: "Employee ID" },
+            { name: "designation", label: "Designation" },
+            { name: "place", label: "Location" },
+            { name: "bloodGroup", label: "Blood Group" },
+          ],
+          sampleData: {
+            name: "Rajesh Sharma",
+            employeeId: "EMP-101",
+            designation: "Software Engineer",
+            place: "Bengaluru",
+          },
+        },
+        product: {
+          label: "Product",
+          fields: [
+            { name: "title", label: "Product Title" },
+            { name: "sku", label: "SKU Code" },
+            { name: "price", label: "Price" },
+          ],
+          sampleData: {
+            title: "Wireless Mouse",
+            sku: "WM-889",
+            price: "$25.00",
+          },
+        },
+      };
+
+      // Example Initial Layout
+      const initialLayout = {
+        id: "layout-demo",
+        name: "Demo Badge",
+        targetEntity: "employee",
+        width: 100, // Number, not string
+        height: 60,
+        unit: "mm",
+        backgroundColor: "#ffffff",
+        elements: [
+          {
+            id: "t1",
+            type: "text",
+            x: 5,
+            y: 5,
+            w: 90,
+            h: 8,
+            content: "EMPLOYEE ID",
+            style: { textAlign: "center", fontWeight: "bold" },
+          },
+          {
+            id: "q1",
+            type: "qr",
+            x: 35,
+            y: 15,
+            w: 30,
+            h: 30,
+            content: "{{employeeId}}",
+          },
+          {
+            id: "t2",
+            type: "text",
+            x: 5,
+            y: 48,
+            w: 90,
+            h: 8,
+            content: "{{name}}",
+            style: { textAlign: "center" },
+          },
+        ],
+      };
+
+      const app = document.getElementById("app");
+      const designer = new QRLayoutDesigner({
+        element: app,
+        entitySchemas: schemas,
+        initialLayout: initialLayout,
+        onSave: (layout) => {
+          console.log("Saved Layout:", layout);
+          alert("Layout saved! Check console.");
+        },
+      });
+    </script>
+  </body>
 </html>
