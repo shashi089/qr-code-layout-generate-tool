@@ -383,6 +383,112 @@
   color: var(--text-secondary);
 }
 
+/* SAMPLE DATA */
+.qrlayout-designer .sample-data-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.qrlayout-designer .sample-data-list .form-group label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.qrlayout-designer .sample-data-list label code {
+  font-family: monospace;
+  font-size: 0.625rem;
+  opacity: 0.7;
+  background: var(--panel-bg-alt);
+  padding: 2px 4px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+/* MODAL STYLES */
+.qrlayout-designer .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.qrlayout-designer .modal-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.qrlayout-designer .modal-content {
+  background: var(--panel-bg);
+  width: 90%;
+  max-width: 600px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.qrlayout-designer .modal-overlay.show .modal-content {
+  transform: translateY(0);
+}
+
+.qrlayout-designer .modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.qrlayout-designer .modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.qrlayout-designer .btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+.qrlayout-designer .modal-body {
+  padding: 24px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.qrlayout-designer .modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  background: var(--panel-bg-alt);
+}
+
+.qrlayout-designer .sample-data-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
 /* TOGGLE GROUPS */
 .qrlayout-designer .toggle-group {
   display: flex;
