@@ -72,8 +72,8 @@ const vIndeterminate = {
         <p class="text-gray-400 text-sm">Add a new item to get started</p>
     </div>
 
-    <div v-else class="overflow-hidden bg-white shadow-xl shadow-gray-200/50 rounded-2xl border border-gray-100 ring-1 ring-black/5">
-        <table class="w-full text-left border-collapse">
+    <div v-else class="overflow-x-auto bg-white shadow-xl shadow-gray-200/50 rounded-2xl border border-gray-100 ring-1 ring-black/5">
+        <table class="w-full text-left border-collapse min-w-[800px] lg:min-w-max">
             <thead>
                 <tr class="bg-gray-50/80 border-b border-gray-200">
                     <th v-if="isSelectionEnabled" class="px-6 py-4 w-12">
@@ -85,10 +85,10 @@ const vIndeterminate = {
                             @change="handleSelectAll"
                         />
                     </th>
-                    <th v-for="col in columns" :key="col.header" class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500" :class="col.class || ''">
+                    <th v-for="col in columns" :key="col.header" class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500 whitespace-nowrap" :class="col.class || ''">
                         {{ col.header }}
                     </th>
-                    <th v-if="$attrs.onEdit || $attrs.onDelete" class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-right">
+                    <th v-if="$attrs.onEdit || $attrs.onDelete" class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-gray-500 text-right whitespace-nowrap">
                         Actions
                     </th>
                 </tr>
@@ -106,7 +106,7 @@ const vIndeterminate = {
                             @change="(e) => handleSelectRow(String(item[keyField]), (e.target as HTMLInputElement).checked)"
                         />
                     </td>
-                    <td v-for="col in columns" :key="col.header" class="px-6 py-4 text-sm text-gray-700">
+                    <td v-for="col in columns" :key="col.header" class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
                         <slot name="cell" :item="item" :column="col">
                             <span v-if="col.accessorKey">{{ item[col.accessorKey] }}</span>
                             <span v-else class="text-gray-400">--</span>

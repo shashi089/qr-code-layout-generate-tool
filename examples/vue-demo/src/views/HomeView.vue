@@ -18,18 +18,18 @@ import { RouterLink } from 'vue-router';
                         </span>
                         v1.0 Now Available with Vue 3
                     </div>
-                    <h1 class="text-5xl lg:text-7xl font-bold leading-tight tracking-tight">
+                    <h1 class="text-4xl md:text-5xl lg:text-7xl font-bold leading-tight tracking-tight">
                         Design. Print. <br/>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">Track Everything.</span>
                     </h1>
                     <p class="text-xl text-teal-100 font-light leading-relaxed max-w-lg">
                         The complete industrial labeling solution. Create dynamic QR code layouts for assets, employees, and inventory in minutes using our visual designer.
                     </p>
-                    <div class="flex flex-wrap gap-4 pt-4">
-                        <RouterLink to="/labels" class="bg-emerald-500 hover:bg-emerald-400 text-teal-950 px-8 py-4 rounded-xl font-bold transition-all transform hover:-translate-y-1 shadow-lg shadow-emerald-900/20 flex items-center gap-2">
+                    <div class="flex flex-col sm:flex-row flex-wrap gap-4 pt-4">
+                        <RouterLink to="/labels" class="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-400 text-teal-950 px-8 py-4 rounded-xl font-bold transition-all transform hover:-translate-y-1 shadow-lg shadow-emerald-900/20 flex items-center justify-center gap-2">
                             Start Designing <ArrowRight :size="20" />
                         </RouterLink>
-                        <a href="https://github.com/shashi089/qr-code-layout-generate-tool" target="_blank" class="bg-teal-800/40 hover:bg-teal-700/50 text-white border border-teal-700 decoration-none px-8 py-4 rounded-xl font-medium transition-all backdrop-blur-sm flex items-center gap-2">
+                        <a href="https://github.com/shashi089/qr-code-layout-generate-tool" target="_blank" class="w-full sm:w-auto justify-center bg-teal-800/40 hover:bg-teal-700/50 text-white border border-teal-700 decoration-none px-8 py-4 rounded-xl font-medium transition-all backdrop-blur-sm flex items-center gap-2">
                             View Logic
                         </a>
                     </div>
@@ -80,7 +80,7 @@ import { RouterLink } from 'vue-router';
 
     <!-- Features / Use Cases -->
     <div class="max-w-7xl mx-auto px-8 -mt-24 relative z-20 pb-24">
-        <div class="grid md:grid-cols-3 gap-8">
+        <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
             <!-- Feature 1 -->
             <div class="bg-white p-8 rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 hover:transform hover:-translate-y-2 transition-all duration-300 group">
                 <div class="w-14 h-14 bg-teal-50 rounded-xl flex items-center justify-center text-teal-600 mb-6 group-hover:bg-teal-600 group-hover:text-white transition-colors">
@@ -97,7 +97,7 @@ import { RouterLink } from 'vue-router';
             </div>
 
             <!-- Feature 2 -->
-            <div class="bg-white p-8 rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-200 hover:transform hover:-translate-y-2 transition-all duration-300 md:-mt-8 group relative overflow-hidden">
+            <div class="bg-white p-8 rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-200 hover:transform hover:-translate-y-2 transition-all duration-300 lg:-mt-8 group relative overflow-hidden">
                 <div class="absolute top-0 right-0 p-4 opacity-5">
                     <Settings :size="120" />
                 </div>
@@ -139,7 +139,7 @@ import { RouterLink } from 'vue-router';
         </div>
 
         <div class="grid md:grid-cols-3 gap-8 relative">
-            <div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -z-10 hidden md:block"></div>
+            <div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -z-10 hidden lg:block"></div>
             
             <!-- Step 1 -->
             <div class="bg-white p-6 rounded-xl border border-gray-200 text-center relative">

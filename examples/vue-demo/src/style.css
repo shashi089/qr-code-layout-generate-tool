@@ -2,3 +2,39 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 @import 'qrlayout-ui/style.css';
+
+/* Utility for hiding scrollbar visually but allowing scroll */
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari and Opera */
+}
+
+/* Designer Mobile Overrides */
+@media (max-width: 640px) {
+
+    .qrlayout-designer .sidebar,
+    .qrlayout-designer .sidebar-right {
+        max-width: calc(100% - 48px) !important;
+        width: calc(100% - 48px) !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 12px !important;
+        height: calc(100% - 70px) !important;
+        top: 60px !important;
+    }
+
+    .qrlayout-designer .sidebar {
+        left: 8px !important;
+    }
+
+    .qrlayout-designer .sidebar-right {
+        right: 8px !important;
+    }
+}

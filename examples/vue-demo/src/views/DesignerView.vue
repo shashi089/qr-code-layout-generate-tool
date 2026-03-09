@@ -113,10 +113,11 @@ function handleBack() {
 <div class="relative min-h-screen bg-white">
     <button
         @click="handleBack"
-        class="fixed top-4 left-4 z-[9999] flex items-center gap-2 bg-white hover:bg-teal-50 text-gray-700 hover:text-teal-700 px-4 py-2 rounded-lg font-medium shadow-md transition-all border border-gray-200 hover:border-teal-200 cursor-pointer"
+        class="fixed top-[13px] right-2 sm:right-4 z-[9999] flex items-center gap-2 bg-white hover:bg-teal-50 text-gray-700 hover:text-teal-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium shadow-md transition-all border border-gray-200 hover:border-teal-200 cursor-pointer text-sm sm:text-base"
     >
-        <ArrowLeft :size="18" />
-        Back to Labels
+        <ArrowLeft :size="16" class="sm:w-[18px] sm:h-[18px]" />
+        <span class="hidden sm:inline">Back to Labels</span>
+        <span class="sm:hidden">Back</span>
     </button>
     <div
         class="designer-container h-screen w-screen"
