@@ -1,7 +1,7 @@
 {
   "name": "qrlayout-core",
-  "version": "1.1.5",
-  "description": "Headless rendering engine for QR code layouts, supporting ZPL, PDF, and Canvas.",
+  "version": "1.1.6",
+  "description": "Headless QR code label rendering engine — generate ZPL, PDF, PNG layouts from JSON. Works in browser and Node.js.",
   "keywords": [
     "qr-code",
     "qr-layout",
@@ -18,14 +18,27 @@
     "barcode",
     "typescript",
     "nodejs",
-    "canvas-rendering"
+    "canvas-rendering",
+    "label-designer",
+    "mail-merge",
+    "layout-engine",
+    "react",
+    "vue",
+    "svelte"
   ],
   "author": "Shashidhar Naik <shashidharnaik8@gmail.com>",
   "license": "MIT",
+  "homepage": "https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/packages/core#readme",
+  "bugs": {
+    "url": "https://github.com/shashi089/qr-code-layout-generate-tool/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shashi089/qr-code-layout-generate-tool.git",
     "directory": "packages/core"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   },
   "type": "module",
   "main": "dist/index.js",

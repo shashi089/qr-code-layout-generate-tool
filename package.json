@@ -1,5 +1,6 @@
 {
   "name": "qr-layout-workspace",
+  "version": "0.0.0",
   "private": true,
   "description": "Monorepo for QR Layout Tool - A professional-grade engine for designing and printing QR code layouts.",
   "keywords": [
@@ -14,10 +15,18 @@
     "typescript",
     "low-code"
   ],
+  "author": "Shashidhar Naik <shashidharnaik8@gmail.com>",
   "license": "MIT",
+  "homepage": "https://github.com/shashi089/qr-code-layout-generate-tool#readme",
+  "bugs": {
+    "url": "https://github.com/shashi089/qr-code-layout-generate-tool/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shashi089/qr-code-layout-generate-tool.git"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   },
   "workspaces": [
     "packages/*"
@@ -26,6 +35,11 @@
     "dev:ui": "npm --workspace packages/ui run dev",
     "build:core": "npm --workspace packages/core run build",
     "build:ui": "npm --workspace packages/ui run build",
-    "build": "npm run build:core && npm run build:ui"
+    "build": "npm run build:core && npm run build:ui",
+    "publish:core": "npm --workspace packages/core publish --access public",
+    "publish:ui": "npm --workspace packages/ui publish --access public",
+    "publish:all": "npm run publish:core && npm run publish:ui",
+    "version:core": "npm --workspace packages/core version",
+    "version:ui": "npm --workspace packages/ui version"
   }
 }

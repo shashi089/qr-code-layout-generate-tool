@@ -1,7 +1,7 @@
 {
   "name": "qrlayout-ui",
-  "version": "1.0.9",
-  "description": "A framework-agnostic visual designer UI for QR code and label layouts.",
+  "version": "1.0.10",
+  "description": "Embeddable drag-and-drop QR label designer — works in React, Vue, Svelte, Angular and vanilla JS. Pairs with qrlayout-core.",
   "keywords": [
     "qr-code",
     "qr-layout",
@@ -19,14 +19,27 @@
     "label-printing",
     "sticker-designer",
     "typescript",
-    "framework-agnostic"
+    "framework-agnostic",
+    "zpl",
+    "zebra-printer",
+    "thermal-printer",
+    "embeddable",
+    "headless-ui",
+    "pdf-export"
   ],
   "author": "Shashidhar Naik <shashidharnaik8@gmail.com>",
   "license": "MIT",
+  "homepage": "https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/packages/ui#readme",
+  "bugs": {
+    "url": "https://github.com/shashi089/qr-code-layout-generate-tool/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/shashi089/qr-code-layout-generate-tool.git",
     "directory": "packages/ui"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   },
   "private": false,
   "type": "module",
@@ -53,6 +66,9 @@
   },
   "dependencies": {
     "qrlayout-core": "^1.1.1"
+  },
+  "peerDependencies": {
+    "qrlayout-core": ">=1.1.1"
   },
   "devDependencies": {
     "typescript": "^5.3.3",

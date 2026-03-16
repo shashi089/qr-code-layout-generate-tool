@@ -1,0 +1,156 @@
+name: Auto Release & Publish
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish-core:
+    name: Publish qrlayout-core
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Get core version
+        id: core_pkg
+        run: |
+          VERSION=$(node -p "require('./packages/core/package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Core version: $VERSION"
+
+      - name: Check if core tag exists
+        id: core_tag
+        run: |
+          git fetch --tags
+          if git rev-parse "qrlayout-core@${{ steps.core_pkg.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "qrlayout-core@${{ steps.core_pkg.outputs.version }} already published — skipping"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "qrlayout-core@${{ steps.core_pkg.outputs.version }} not found — will publish"
+          fi
+
+      - name: Install dependencies
+        if: steps.core_tag.outputs.exists == 'false'
+        run: npm ci
+
+      - name: Build core
+        if: steps.core_tag.outputs.exists == 'false'
+        run: npm run build:core
+
+      - name: Publish qrlayout-core
+        if: steps.core_tag.outputs.exists == 'false'
+        run: |
+          cd packages/core
+          echo "Publishing qrlayout-core@${{ steps.core_pkg.outputs.version }}..."
+          npm publish --access public
+          echo "Done!"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release for core
+        if: steps.core_tag.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: qrlayout-core@${{ steps.core_pkg.outputs.version }}
+          name: qrlayout-core v${{ steps.core_pkg.outputs.version }}
+          body: |
+            ## qrlayout-core v${{ steps.core_pkg.outputs.version }}
+
+            ### Install
+            ```bash
+            npm i qrlayout-core
+            ```
+
+            See [CHANGELOG](https://github.com/shashi089/qr-code-layout-generate-tool/blob/main/packages/core/CHANGELOG.md) for details.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-ui:
+    name: Publish qrlayout-ui
+    runs-on: ubuntu-latest
+    needs: publish-core
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Get ui version
+        id: ui_pkg
+        run: |
+          VERSION=$(node -p "require('./packages/ui/package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "UI version: $VERSION"
+
+      - name: Check if ui tag exists
+        id: ui_tag
+        run: |
+          git fetch --tags
+          if git rev-parse "qrlayout-ui@${{ steps.ui_pkg.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "qrlayout-ui@${{ steps.ui_pkg.outputs.version }} already published — skipping"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "qrlayout-ui@${{ steps.ui_pkg.outputs.version }} not found — will publish"
+          fi
+
+      - name: Install dependencies
+        if: steps.ui_tag.outputs.exists == 'false'
+        run: npm ci
+
+      - name: Build ui
+        if: steps.ui_tag.outputs.exists == 'false'
+        run: npm run build:ui
+
+      - name: Publish qrlayout-ui
+        if: steps.ui_tag.outputs.exists == 'false'
+        run: |
+          cd packages/ui
+          echo "Publishing qrlayout-ui@${{ steps.ui_pkg.outputs.version }}..."
+          npm publish --access public
+          echo "Done!"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create GitHub Release for ui
+        if: steps.ui_tag.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: qrlayout-ui@${{ steps.ui_pkg.outputs.version }}
+          name: qrlayout-ui v${{ steps.ui_pkg.outputs.version }}
+          body: |
+            ## qrlayout-ui v${{ steps.ui_pkg.outputs.version }}
+
+            ### Install
+            ```bash
+            npm i qrlayout-ui
+            ```
+
+            See [CHANGELOG](https://github.com/shashi089/qr-code-layout-generate-tool/blob/main/packages/ui/CHANGELOG.md) for details.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
