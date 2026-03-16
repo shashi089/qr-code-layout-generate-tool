@@ -22,10 +22,11 @@ function handleReset() {
 <template>
   <div class="min-h-screen bg-gray-50">
     <div v-if="!isDesigner" class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40 backdrop-blur-lg bg-white/95">
-      <div class="max-w-7xl mx-auto px-8">
-        <div class="flex items-center justify-between py-4">
+      <div class="max-w-7xl mx-auto px-4 md:px-8">
+        <div class="flex flex-col lg:flex-row items-center justify-between py-4 gap-4">
           <!-- Logo/Brand -->
-          <div class="flex items-center gap-3">
+          <div class="flex items-center justify-between w-full lg:w-auto">
+            <div class="flex items-center gap-3">
             <div class="p-2.5 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-xl shadow-md">
               <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
@@ -38,16 +39,19 @@ function handleReset() {
               <p class="text-xs text-gray-500">Management Dashboard</p>
             </div>
           </div>
+          </div>
 
-          <!-- Navigation Tabs -->
-          <nav class="flex gap-2 bg-gray-100 p-1.5 rounded-xl">
-            <RouterLink
+          <!-- Navigation & Actions Container -->
+          <div class="flex items-center w-full lg:w-auto gap-4 overflow-x-auto pb-2 lg:pb-0 hide-scrollbar">
+            <!-- Navigation Tabs -->
+            <nav class="flex gap-2 bg-gray-100 p-1.5 rounded-xl shrink-0 min-w-max">
+              <RouterLink
               to="/"
               class="flex items-center gap-2 px-4 py-2 font-semibold transition-all duration-200 rounded-lg"
               :class="{ 'bg-white text-teal-600 shadow-sm': route.path === '/', 'text-gray-600 hover:text-gray-900 hover:bg-white/50': route.path !== '/' }"
             >
               <Home :size="18" />
-              <span class="hidden md:inline">Home</span>
+              <span>Home</span>
             </RouterLink>
             <RouterLink
               to="/labels"
@@ -71,7 +75,7 @@ function handleReset() {
               :class="{ 'bg-white text-teal-600 shadow-sm': route.path.startsWith('/machines'), 'text-gray-600 hover:text-gray-900 hover:bg-white/50': !route.path.startsWith('/machines') }"
             >
               <Cpu :size="18" />
-              <span class="hidden md:inline">Machines</span>
+              <span>Machines</span>
             </RouterLink>
             <RouterLink
               to="/storage"
@@ -79,17 +83,18 @@ function handleReset() {
               :class="{ 'bg-white text-teal-600 shadow-sm': route.path.startsWith('/storage'), 'text-gray-600 hover:text-gray-900 hover:bg-white/50': !route.path.startsWith('/storage') }"
             >
               <Package :size="18" />
-              <span class="hidden md:inline">Storage</span>
+              <span>Storage</span>
             </RouterLink>
           </nav>
 
           <!-- Actions -->
           <button
             @click="handleReset"
-            class="ml-4 text-sm text-red-600 hover:text-red-800 font-medium px-3 py-1.5 hover:bg-red-50 rounded-lg transition-colors cursor-pointer border border-red-100"
+            class="shrink-0 text-sm text-red-600 hover:text-red-800 font-medium px-3 py-1.5 hover:bg-red-50 rounded-lg transition-colors cursor-pointer border border-red-100"
           >
             Clear Data
           </button>
+          </div>
         </div>
       </div>
     </div>

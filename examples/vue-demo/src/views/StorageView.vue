@@ -135,17 +135,17 @@ const hasLayout = computed(() => !!selectedLayoutId.value);
 </script>
 
 <template>
-<div class="max-w-7xl mx-auto px-8 py-8 animate-in fade-in duration-500">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-6 md:py-8 animate-in fade-in duration-500">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div>
             <h2 class="text-2xl font-bold text-gray-900">Storage Master (BINs)</h2>
             <p class="text-gray-500">Manage warehouse locations and print storage labels</p>
         </div>
 
-        <div class="flex items-center gap-3">
-            <div class="relative">
+        <div class="flex flex-col sm:flex-row items-stretch w-full md:w-auto gap-3">
+            <div class="relative w-full sm:w-auto">
                 <select
-                    class="appearance-none bg-white border border-gray-300 text-gray-700 py-2 pl-4 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm cursor-pointer"
+                    class="w-full appearance-none bg-white border border-gray-300 text-gray-700 py-2 pl-4 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent shadow-sm cursor-pointer"
                     v-model="selectedLayoutId"
                 >
                     <option value="" disabled>Select Layout Template</option>
@@ -158,10 +158,10 @@ const hasLayout = computed(() => !!selectedLayoutId.value);
 
             <button
                 @click="handleOpenModal()"
-                class="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm cursor-pointer"
+                class="w-full sm:w-auto flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm cursor-pointer"
             >
                 <Plus :size="18" />
-                <span class="hidden sm:inline">Add BIN</span>
+                <span>Add BIN</span>
             </button>
         </div>
     </div>
@@ -184,7 +184,7 @@ const hasLayout = computed(() => !!selectedLayoutId.value);
             <span class="font-medium">Selected Bins</span>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
             <button
                 @click="handleExportPNG"
                 :disabled="!hasLayout"
@@ -260,7 +260,7 @@ const hasLayout = computed(() => !!selectedLayoutId.value);
                     />
                 </div>
 
-                <div class="flex gap-4">
+                <div class="flex flex-col sm:flex-row gap-4">
                     <div class="flex-1 space-y-1.5">
                         <label class="block text-sm font-medium text-gray-700">Aisle</label>
                         <input

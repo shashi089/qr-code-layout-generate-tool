@@ -38,16 +38,16 @@ const columns: Column<StickerLayout>[] = [
 </script>
 
 <template>
-    <div class="p-8 max-w-7xl mx-auto animate-in fade-in duration-500">
+    <div class="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto animate-in fade-in duration-500">
         <!-- Header Section -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 mb-8">
             <div>
                 <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Label Templates</h1>
                 <p class="text-gray-500 mt-1">Design and manage your QR code layouts</p>
             </div>
             <button
                 @click="handleCreateNew"
-                class="flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-sm hover:shadow-md active:scale-95 cursor-pointer"
+                class="w-full md:w-auto flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-sm hover:shadow-md active:scale-95 cursor-pointer"
             >
                 <Plus :size="20" />
                 <span>Create New Label</span>
