@@ -1,4 +1,4 @@
-import { ArrowRight, Cpu, Package, Users, Shield, Zap, Layout } from 'lucide-react';
+import { ArrowRight, Cpu, Package, Users, Shield, Zap, Layout, Github } from 'lucide-react';
 
 interface LandingPageProps {
     onNavigate: (view: 'home' | 'labels' | 'employees' | 'machines' | 'storage') => void;
@@ -8,22 +8,20 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
     return (
         <div className="bg-white min-h-screen">
             {/* Hero Section */}
-            <div className="relative overflow-hidden bg-gradient-to-b from-blue-50 to-white pb-16 pt-24 sm:pb-24 sm:pt-32">
-                <div className="max-w-7xl mx-auto px-8">
+            <div className="relative overflow-hidden bg-gradient-to-b from-blue-50 to-white pb-12 pt-16 sm:pb-24 sm:pt-32">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-                        <div className="sm:text-center md:mx-auto md:max-w-2xl lg:col-span-6 lg:text-left flex flex-col justify-center">
-                            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-                                Industrial Grade <br />
-                                <span className="text-blue-600">QR Label Designer</span>
+                        <div className="text-center lg:text-left lg:col-span-6 flex flex-col justify-center">
+                            <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+                                Professional <span className="text-blue-600">QR Layout Design</span> & Sticker Tool
                             </h1>
-                            <p className="mt-6 text-lg leading-8 text-gray-600">
-                              A powerful tool to design, manage, and print QR code labels for industrial assets, employees, bins, and storage locations.
-                              Streamline operations with high-precision label layouts and seamless ZPL/PDF exports.
+                            <p className="mt-4 sm:mt-6 text-base sm:text-lg leading-7 sm:leading-8 text-gray-600 max-w-2xl mx-auto lg:mx-0">
+                               The ultimate **QR code label sticker** generator for industrial assets. Create professional **text + QR code designs** and export directly to any **ZPL code printer** or thermal labels.
                             </p>
-                            <div className="mt-10 flex items-center gap-x-6 sm:justify-center lg:justify-start">
+                            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-x-6 justify-center lg:justify-start">
                                 <button
                                     onClick={() => onNavigate('labels')}
-                                    className="rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-xl hover:bg-blue-500 transition-all flex items-center gap-2 cursor-pointer"
+                                    className="w-full sm:w-auto rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-xl hover:bg-blue-500 transition-all flex items-center justify-center gap-2 cursor-pointer"
                                 >
                                     Go to Designer <ArrowRight size={18} />
                                 </button>
@@ -125,19 +123,19 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
             </div>
 
             {/* Benefits */}
-            <div className="py-24 sm:py-32">
-                <div className="max-w-7xl mx-auto px-8">
+            <div className="py-16 sm:py-32">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
                         <div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-6">Why use QR Layout Studio?</h3>
-                            <div className="space-y-6">
+                            <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center lg:text-left">Why use QR Layout Studio?</h3>
+                            <div className="space-y-6 max-w-xl mx-auto lg:mx-0">
                                 <div className="flex gap-4">
                                     <div className="h-10 w-10 shrink-0 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
                                         <Zap size={20} />
                                     </div>
                                     <div>
-                                        <h4 className="font-semibold text-gray-900">Instant Thermal Printing</h4>
-                                        <p className="text-gray-600 text-sm">Export directly to ZPL format for Zebra and other industrial printers with zero middleware.</p>
+                                        <h4 className="font-semibold text-gray-900">ZPL Code Printer Support</h4>
+                                        <p className="text-gray-600 text-sm">Design once and export directly to **ZPL code** for high-speed thermal printers like Zebra. Perfect for industrial-grade **qr code label stickers**.</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-4">
@@ -151,13 +149,13 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                                 </div>
                             </div>
                         </div>
-                        <div className="bg-blue-600 rounded-2xl p-8 text-white flex flex-col justify-center relative overflow-hidden">
-                            <div className="relative z-10">
-                                <h3 className="text-3xl font-bold mb-4">Ready to optimize?</h3>
-                                <p className="text-blue-100 mb-8 max-w-sm">Start designing your first professional industrial label in seconds.</p>
+                        <div className="bg-blue-600 rounded-2xl p-6 sm:p-8 text-white flex flex-col justify-center relative overflow-hidden">
+                            <div className="relative z-10 text-center lg:text-left">
+                                <h3 className="text-2xl sm:text-3xl font-bold mb-4">Ready to optimize?</h3>
+                                <p className="text-blue-100 mb-8 max-w-sm mx-auto lg:mx-0">Start designing your first professional industrial label in seconds.</p>
                                 <button
                                     onClick={() => onNavigate('labels')}
-                                    className="bg-white text-blue-600 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition-all cursor-pointer shadow-lg"
+                                    className="w-full sm:w-auto bg-white text-blue-600 px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition-all cursor-pointer shadow-lg"
                                 >
                                     Launch Designer
                                 </button>
@@ -169,6 +167,44 @@ export function LandingPage({ onNavigate }: LandingPageProps) {
                     </div>
                 </div>
             </div>
+            
+            {/* Footer */}
+            <footer className="bg-white border-t border-gray-100 py-12">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-gray-100 rounded-lg">
+                                <Layout size={20} className="text-gray-600" />
+                            </div>
+                            <span className="font-bold text-gray-900">QR Layout Studio</span>
+                        </div>
+                        
+                        <div className="flex items-center gap-8">
+                            <a 
+                                href="https://github.com/shashi089/qr-code-layout-generate-tool" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+                            >
+                                <Github size={18} />
+                                Source Code
+                            </a>
+                            <a 
+                                href="https://github.com/shashi089" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
+                            >
+                                Created by @shashi089
+                            </a>
+                        </div>
+                        
+                        <p className="text-sm text-gray-400">
+                            © 2024 Open Source under MIT License
+                        </p>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 }

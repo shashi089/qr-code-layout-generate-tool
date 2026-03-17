@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://qr-layout-designer.netlify.app/sitemap.xml
