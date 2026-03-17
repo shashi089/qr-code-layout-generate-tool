@@ -5,11 +5,12 @@ import 'qrlayout-ui/style.css';
 import './App.css';
 import { LabelList } from './features/labels/LabelList';
 import { storage } from './services/storage';
-import { ArrowLeft, Tag, Users, Cpu, Home, Package, Github } from 'lucide-react';
+import { ArrowLeft, Tag, Users, Cpu, Home, Package, Github, BookOpen } from 'lucide-react';
 import { EmployeeMaster } from './features/employees/EmployeeMaster';
 import { MachineMaster } from './features/machines/MachineMaster';
 import { BinMaster } from './features/storage/BinMaster';
 import { LandingPage } from './features/home/LandingPage';
+import { DocsPage } from './features/docs/DocsPage';
 
 // ... (Existing SAMPLE_SCHEMAS and DEFAULT_NEW_LAYOUT remain unchanged)
 
@@ -73,7 +74,7 @@ const DEFAULT_NEW_LAYOUT: Omit<StickerLayout, 'id'> = {
   elements: []
 };
 
-type MainView = 'home' | 'labels' | 'employees' | 'machines' | 'storage';
+type MainView = 'home' | 'docs' | 'labels' | 'employees' | 'machines' | 'storage';
 type SubView = 'list' | 'designer';
 
 function App() {
@@ -187,9 +188,9 @@ function App() {
                       </h1>
                       <div className="flex items-center gap-2">
                         <p className="text-[10px] sm:text-xs text-gray-500 hidden sm:block">by</p>
-                        <a 
-                          href="https://github.com/shashi089" 
-                          target="_blank" 
+                        <a
+                          href="https://github.com/shashi089"
+                          target="_blank"
                           rel="noopener noreferrer"
                           className="text-[10px] sm:text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors"
                         >
@@ -226,6 +227,16 @@ function App() {
                     >
                       <Home size={18} />
                       <span className="hidden md:inline">Home</span>
+                    </button>
+                    <button
+                      onClick={() => handleMainViewChange('docs')}
+                      className={`flex items-center gap-2 px-4 py-2 font-semibold transition-all duration-200 rounded-lg cursor-pointer ${mainView === 'docs'
+                        ? 'bg-white text-blue-600 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+                        }`}
+                    >
+                      <BookOpen size={18} />
+                      <span className="hidden sm:inline">Docs</span>
                     </button>
                     <button
                       onClick={() => handleMainViewChange('labels')}
@@ -267,6 +278,7 @@ function App() {
                       <Package size={18} />
                       <span className="hidden sm:inline">Storage</span>
                     </button>
+                    
                   </nav>
                 </div>
 
@@ -312,6 +324,8 @@ function App() {
             <EmployeeMaster />
           ) : mainView === 'machines' ? (
             <MachineMaster />
+          ) : mainView === 'docs' ? (
+            <DocsPage />
           ) : (
             <BinMaster />
           )}
