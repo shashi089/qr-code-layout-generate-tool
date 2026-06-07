@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://react-qr-label-designer.netlify.app/sitemap.xml

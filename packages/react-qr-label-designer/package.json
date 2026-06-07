@@ -1,0 +1,78 @@
+{
+  "name": "react-qr-label-designer",
+  "version": "1.1.8",
+  "description": "An embeddable, visual drag-and-drop QR label designer for React. Generate layouts and export to PDF, PNG, and ZPL formats.",
+  "keywords": [
+    "qr-code",
+    "qr-layout",
+    "react-qr-label-designer",
+    "react-label-designer",
+    "label-designer",
+    "zpl-printer",
+    "sticker-printer",
+    "zebra-printer",
+    "thermal-printer",
+    "pdf-generator",
+    "drag-drop",
+    "visual-editor",
+    "barcode-generator",
+    "mail-merge-print",
+    "label-generator"
+  ],
+  "author": "Shashidhar Naik <shashidharnaik8@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://react-qr-label-designer.netlify.app/",
+  "bugs": {
+    "url": "https://github.com/shashi089/qr-code-layout-generate-tool/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shashi089/qr-code-layout-generate-tool.git",
+    "directory": "packages/react-qr-label-designer"
+  },
+  "type": "module",
+  "main": "./dist/react-qr-label-designer.cjs",
+  "module": "./dist/react-qr-label-designer.js",
+  "types": "./dist/react-qr-label-designer.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/react-qr-label-designer.d.ts",
+      "import": "./dist/react-qr-label-designer.js",
+      "require": "./dist/react-qr-label-designer.cjs"
+    },
+    "./pdf": {
+      "types": "./dist/pdf.d.ts",
+      "import": "./dist/pdf.js",
+      "require": "./dist/pdf.cjs"
+    },
+    "./style.css": "./dist/react-qr-label-designer.css"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "qrlayout-core": "^1.1.8",
+    "qrlayout-ui": "^1.1.1"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.3.3",
+    "vite": "^7.2.7",
+    "vite-plugin-dts": "^4.5.4"
+  }
+}

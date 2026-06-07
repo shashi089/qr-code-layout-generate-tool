@@ -29,17 +29,22 @@
     "node": ">=16.0.0"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/react-qr-label-designer-demo"
   ],
   "scripts": {
     "dev:ui": "npm --workspace packages/ui run dev",
+    "dev:react": "npm --workspace examples/react-qr-label-designer-demo run dev",
     "build:core": "npm --workspace packages/core run build",
     "build:ui": "npm --workspace packages/ui run build",
-    "build": "npm run build:core && npm run build:ui",
+    "build:react": "npm --workspace packages/react-qr-label-designer run build",
+    "build": "npm run build:core && npm run build:ui && npm run build:react",
     "publish:core": "npm --workspace packages/core publish --access public",
     "publish:ui": "npm --workspace packages/ui publish --access public",
-    "publish:all": "npm run publish:core && npm run publish:ui",
+    "publish:react": "npm --workspace packages/react-qr-label-designer publish --access public",
+    "publish:all": "npm run publish:core && npm run publish:ui && npm run publish:react",
     "version:core": "npm --workspace packages/core version",
-    "version:ui": "npm --workspace packages/ui version"
+    "version:ui": "npm --workspace packages/ui version",
+    "version:react": "npm --workspace packages/react-qr-label-designer version"
   }
 }

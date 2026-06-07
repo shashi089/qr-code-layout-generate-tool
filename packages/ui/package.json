@@ -65,10 +65,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "qrlayout-core": "^1.1.1"
+    "qrlayout-core": "^1.1.8"
   },
   "peerDependencies": {
-    "qrlayout-core": ">=1.1.1"
+    "qrlayout-core": ">=1.1.8"
   },
   "devDependencies": {
     "typescript": "^5.3.3",

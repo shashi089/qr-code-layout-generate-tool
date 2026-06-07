@@ -58,7 +58,7 @@ export class QRLayoutDesigner {
         labelWidth: HTMLLabelElement;
         labelHeight: HTMLLabelElement;
         bg: HTMLInputElement;
-        bgPreview: HTMLDivElement;
+        bgPicker: HTMLInputElement;
         sampleData: HTMLDivElement;
     };
 
@@ -147,8 +147,8 @@ export class QRLayoutDesigner {
                         <div class="form-group">
                             <label>Base Background</label>
                             <div class="color-picker-wrapper">
-                                <div data-el="bg-preview" class="color-preview" style="background: #ffffff"></div>
-                                <input type="text" data-input="bg" value="#ffffff" />
+                                <input type="color" data-input="bg-picker" class="color-preview" style="padding: 0; border: 1px solid var(--border-color); cursor: pointer; background: none;" />
+                                <input type="text" data-input="bg" value="#ffffff" placeholder="#ffffff" />
                             </div>
                         </div>
                     </div>
@@ -238,7 +238,7 @@ export class QRLayoutDesigner {
             labelWidth: q('[data-label="width"]') as HTMLLabelElement,
             labelHeight: q('[data-label="height"]') as HTMLLabelElement,
             bg: qi('bg'),
-            bgPreview: q('[data-el="bg-preview"]') as HTMLDivElement,
+            bgPicker: qi('bg-picker'),
             sampleData: q('[data-el="sample-data-container"]') as HTMLDivElement
         };
         this.sampleDataContainer = this.inputs.sampleData;
@@ -270,7 +270,10 @@ export class QRLayoutDesigner {
         this.inputs.labelWidth.innerText = `Width (${this.currentLayout.unit})`;
         this.inputs.labelHeight.innerText = `Height (${this.currentLayout.unit})`;
         this.inputs.bg.value = this.currentLayout.backgroundColor || "#ffffff";
-        this.inputs.bgPreview.style.backgroundColor = this.inputs.bg.value;
+        const isValidHex = (val: string) => /^#[0-9A-F]{6}$/i.test(val);
+        if (isValidHex(this.inputs.bg.value)) {
+            this.inputs.bgPicker.value = this.inputs.bg.value;
+        }
     }
 
     private bindEvents() {
@@ -341,8 +344,19 @@ export class QRLayoutDesigner {
             this.updatePreview();
         };
         this.inputs.bg.oninput = (e) => {
-            this.currentLayout.backgroundColor = (e.target as HTMLInputElement).value;
-            this.inputs.bgPreview.style.backgroundColor = this.currentLayout.backgroundColor;
+            const val = (e.target as HTMLInputElement).value;
+            this.currentLayout.backgroundColor = val;
+            const isValidHex = (v: string) => /^#[0-9A-F]{6}$/i.test(v);
+            if (isValidHex(val)) {
+                this.inputs.bgPicker.value = val;
+            }
+            this.updatePreview();
+        };
+
+        this.inputs.bgPicker.oninput = (e) => {
+            const val = (e.target as HTMLInputElement).value;
+            this.currentLayout.backgroundColor = val;
+            this.inputs.bg.value = val;
             this.updatePreview();
         };
 

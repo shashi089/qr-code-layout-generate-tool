@@ -20,7 +20,7 @@ Try the designer live — no signup required:
 
 | Framework | Live Demo | Source Code |
 | :--- | :--- | :--- |
-| **React** | [▶ Open Demo](https://qr-layout-designer.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/react-demo) |
+| **React** | [▶ Open Demo](https://react-qr-label-designer.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/react-qr-label-designer-demo) |
 | **Angular** | [▶ Open Demo](https://qr-layout-designer-angular-demo.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/angular-demo) |
 | **Svelte 5** | [▶ Open Demo](https://qr-layout-designer-svelte.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/svelte-demo) |
 | **Vue 3** | [▶ Open Demo](https://qr-layout-designer-vue.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/vue-demo) |
@@ -166,7 +166,7 @@ pdf.save("badges.pdf");
 ```
 
 > [!NOTE]
-> **About the live demo apps** — Each framework demo ([React](https://qr-layout-designer.netlify.app/), [Angular](https://qr-layout-designer-angular-demo.netlify.app/), [Svelte](https://qr-layout-designer-svelte.netlify.app/), [Vue](https://qr-layout-designer-vue.netlify.app/)) comes with pre-built sample layouts and demo records so you can explore every feature without any setup.
+> **About the live demo apps** — Each framework demo ([React](https://react-qr-label-designer.netlify.app/), [Angular](https://qr-layout-designer-angular-demo.netlify.app/), [Svelte](https://qr-layout-designer-svelte.netlify.app/), [Vue](https://qr-layout-designer-vue.netlify.app/)) comes with pre-built sample layouts and demo records so you can explore every feature without any setup.
 >
 > All data is stored **only in your browser's `localStorage`** — nothing is sent to any server. Clearing browser storage resets the demo to its defaults. Your layouts and data never leave your browser.
 
@@ -195,7 +195,8 @@ qr-code-layout-generate-tool/
 │   ├── core/          # qrlayout-core — headless rendering engine
 │   └── ui/            # qrlayout-ui  — visual drag-and-drop designer
 └── examples/
-    ├── react-demo/    # React + Vite reference app
+    ├── react-qr-label-designer-demo/ # React + Vite wrapper showcase app
+    ├── react-demo/    # Legacy React + Vite reference app
     ├── angular-demo/  # Angular 19 reference app
     ├── svelte-demo/   # Svelte 5 reference app
     └── vue-demo/      # Vue 3 reference app
