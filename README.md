@@ -20,7 +20,7 @@ Try the designer live — no signup required:
 
 | Framework | Live Demo | Source Code |
 | :--- | :--- | :--- |
-| **React** | [▶ Open Demo](https://react-qr-label-designer.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/react-qr-label-designer-demo) |
+| **React** | [▶ Open Demo](https://react-qr-label-designer.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/react-qr-label-demo) |
 | **Angular** | [▶ Open Demo](https://qr-layout-designer-angular-demo.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/angular-demo) |
 | **Svelte 5** | [▶ Open Demo](https://qr-layout-designer-svelte.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/svelte-demo) |
 | **Vue 3** | [▶ Open Demo](https://qr-layout-designer-vue.netlify.app/) | [Source](https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/examples/vue-demo) |
@@ -195,7 +195,7 @@ qr-code-layout-generate-tool/
 │   ├── core/          # qrlayout-core — headless rendering engine
 │   └── ui/            # qrlayout-ui  — visual drag-and-drop designer
 └── examples/
-    ├── react-qr-label-designer-demo/ # React + Vite wrapper showcase app
+    ├── react-qr-label-demo/          # React + Vite wrapper showcase app
     ├── react-demo/    # Legacy React + Vite reference app
     ├── angular-demo/  # Angular 19 reference app
     ├── svelte-demo/   # Svelte 5 reference app

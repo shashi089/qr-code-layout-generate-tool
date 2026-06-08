@@ -1,4 +1,4 @@
-import type { StickerLayout } from 'react-qr-label-designer';
+import type { StickerLayout } from 'react-qr-label';
 
 const STORAGE_KEY = 'qr_labels_data';
 const EMPLOYEE_STORAGE_KEY = 'employee_data';

@@ -33,7 +33,7 @@ export function LandingPage({ onNavigate, onLoadPreset }: LandingPageProps) {
               {/* Release Badge */}
               <div className="inline-flex items-center gap-1.5 self-center lg:self-start bg-blue-100/80 border border-blue-200/50 rounded-full px-3.5 py-1 text-xs font-semibold text-blue-700 mb-6 shadow-sm backdrop-blur-sm animate-pulse">
                 <Sparkles size={12} />
-                <span>React QR Label Designer v0.1.0 Released</span>
+                <span>React QR Label v0.1.0 Released</span>
               </div>
               
               <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-6xl leading-[1.15]">
@@ -74,9 +74,9 @@ export function LandingPage({ onNavigate, onLoadPreset }: LandingPageProps) {
                     <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
                   </div>
-                  <span className="text-blue-400">import</span> {"{"} <span className="text-yellow-300">QRLabelDesigner</span> {"}"} <span className="text-blue-400">from</span> <span className="text-green-300">'react-qr-label-designer'</span>;
+                  <span className="text-blue-400">import</span> {"{"} <span className="text-yellow-300">QRLabelDesigner</span> {"}"} <span className="text-blue-400">from</span> <span className="text-green-300">'react-qr-label'</span>;
                   <br />
-                  <span className="text-blue-400">import</span> <span className="text-green-300">'react-qr-label-designer/style.css'</span>;
+                  <span className="text-blue-400">import</span> <span className="text-green-300">'react-qr-label/style.css'</span>;
                   <br /><br />
                   <span className="text-gray-500">// Embed the designer component</span>
                   <br />

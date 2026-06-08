@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { StickerLayout } from 'react-qr-label-designer';
+import type { StickerLayout } from 'react-qr-label';
 import { Plus, Layout, User, Cpu, Trash2, Edit3, Sparkles } from 'lucide-react';
 import { EntityMaster } from '../sandbox/EntityMaster';
 

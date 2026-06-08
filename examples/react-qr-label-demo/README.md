@@ -1,8 +1,8 @@
-# React QR Label Designer Demo
+# React QR Label Demo
 
 > 🌐 **Live Demo Application**: [react-qr-label-designer.netlify.app](https://react-qr-label-designer.netlify.app/)
 
-This workspace showcases a live integration of `react-qr-label-designer` — an embeddable drag-and-drop label designer and headless batch-mail-merge printing engine for React. 
+This workspace showcases a live integration of `react-qr-label` — an embeddable drag-and-drop label designer and headless batch-mail-merge printing engine for React. 
 
 The application is structured as a **Sticker Studio** split-panel workspace where you can visually design label layouts and instantly test printing them against mock databases.
 
@@ -60,7 +60,7 @@ Our visual QR label designer and batch print pipeline solves label generation ne
 
 1. Navigate to this demo directory:
    ```bash
-   cd examples/react-qr-label-designer-demo
+   cd examples/react-qr-label-demo
    ```
 
 2. Install workspace dependencies:

@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Plus, X, Printer, FileText, Image as ImageIcon, Info, Code, Copy, Check, Terminal, Eye } from 'lucide-react';
 import { storage } from '../../services/storage';
 import { Table, type Column } from '../../components/Table';
-import { StickerPrinter } from 'react-qr-label-designer';
+import { StickerPrinter } from 'react-qr-label';
 import { exportToPNG, exportToBatchPDF, exportToZPLFile } from '../../services/exportUtils';
-import type { StickerLayout } from 'react-qr-label-designer';
+import type { StickerLayout } from 'react-qr-label';
 
 interface EntityMasterProps {
     layout: StickerLayout;
@@ -172,8 +172,8 @@ export const EntityMaster: React.FC<EntityMasterProps> = ({ layout }) => {
 
     // --- Dynamic Code Generators ---
     const getReactCode = () => `import { useState } from 'react';
-import { QRLabelDesigner, type StickerLayout } from 'react-qr-label-designer';
-import 'react-qr-label-designer/style.css';
+import { QRLabelDesigner, type StickerLayout } from 'react-qr-label';
+import 'react-qr-label/style.css';
 
 // Visual design template JSON
 const INITIAL_LAYOUT: StickerLayout = ${JSON.stringify(layout, null, 2)};
@@ -208,8 +208,8 @@ export default function MyLabelDesigner() {
   );
 }`;
 
-    const getHeadlessCode = () => `import { StickerPrinter } from 'react-qr-label-designer';
-import { exportToPDF } from 'react-qr-label-designer/pdf'; // PDF sub-path export
+    const getHeadlessCode = () => `import { StickerPrinter } from 'react-qr-label';
+import { exportToPDF } from 'react-qr-label/pdf'; // PDF sub-path export
 
 const printer = new StickerPrinter();
 const layout = ${JSON.stringify(layout, null, 2)};

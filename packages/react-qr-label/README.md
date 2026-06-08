@@ -1,10 +1,10 @@
-# react-qr-label-designer
+# react-qr-label
 
 > 🌐 **Live Showcase Application**: [react-qr-label-designer.netlify.app](https://react-qr-label-designer.netlify.app/)
 
 **An embeddable, framework-agnostic visual drag-and-drop QR label designer for React.**
 
-`react-qr-label-designer` is the official React wrapper for the `qrlayout` ecosystem. It lets you embed a fully responsive, professional label editor directly into your React application. Users can layout text blocks and QR codes, bind variables (`{{fields}}`), preview layouts with real sample records, and export templates to JSON.
+`react-qr-label` is the official React wrapper for the `qrlayout` ecosystem. It lets you embed a fully responsive, professional label editor directly into your React application. Users can layout text blocks and QR codes, bind variables (`{{fields}}`), preview layouts with real sample records, and export templates to JSON.
 
 Once designed, you can use the headless `qrlayout-core` engine to merge your layouts with database records and print in bulk to **PDF, PNG, or ZPL (Zebra thermal printers)**.
 
@@ -26,7 +26,7 @@ Once designed, you can use the headless `qrlayout-core` engine to merge your lay
 Install the React wrapper package:
 
 ```bash
-npm install react-qr-label-designer
+npm install react-qr-label
 ```
 
 *(Note: `qrlayout-core` and `qrlayout-ui` are direct dependencies of this package and will be installed automatically by npm/yarn/pnpm.)*
@@ -39,7 +39,7 @@ npm install react-qr-label-designer
 To render the designer properly, you must import the package styles in your app's entry point (e.g., `main.tsx` or `App.tsx`):
 
 ```typescript
-import 'react-qr-label-designer/style.css';
+import 'react-qr-label/style.css';
 ```
 
 ### 2. Add the Component to your Code
@@ -47,8 +47,8 @@ Here is a minimal implementation loading a default layout and entity schemas:
 
 ```tsx
 import { useState } from 'react';
-import { QRLabelDesigner, type StickerLayout, type EntitySchema } from 'react-qr-label-designer';
-import 'react-qr-label-designer/style.css';
+import { QRLabelDesigner, type StickerLayout, type EntitySchema } from 'react-qr-label';
+import 'react-qr-label/style.css';
 
 export default function MyDesigner() {
   const [layout, setLayout] = useState<StickerLayout>({
@@ -117,7 +117,7 @@ export default function MyDesigner() {
 The `onSave` callback outputs a compact, plain JSON object. You should store this JSON in your database (e.g. Postgres `JSONB`). When you need to print labels in bulk, you can import the `StickerPrinter` engine directly from the same package:
 
 ```typescript
-import { StickerPrinter } from 'react-qr-label-designer';
+import { StickerPrinter } from 'react-qr-label';
 
 // 1. Fetch saved layout config & records list from database
 const layoutJSON = await fetchLayoutFromDB(layoutId);

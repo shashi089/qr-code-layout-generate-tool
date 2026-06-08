@@ -87,7 +87,7 @@ export function DocsPage() {
             <h1 className="text-3xl font-bold text-gray-900">QR Label Designer — Docs</h1>
           </div>
           <p className="text-gray-600 text-lg leading-relaxed mb-6">
-            QR Label Designer is powered by <code className="font-mono font-bold text-gray-800 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-200 text-sm">react-qr-label-designer</code>, a complete visual editor and high-performance print engine for React applications.
+            QR Label Designer is powered by <code className="font-mono font-bold text-gray-800 bg-gray-50 px-1.5 py-0.5 rounded border border-gray-200 text-sm">react-qr-label</code>, a complete visual editor and high-performance print engine for React applications.
           </p>
           <div className="grid sm:grid-cols-2 gap-4">
             {[
@@ -107,26 +107,26 @@ export function DocsPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Package Details</h2>
           <p className="text-gray-500 mb-6">The React library is published on npm and is open source under the MIT license.</p>
 
-          {/* react-qr-label-designer */}
+          {/* react-qr-label */}
           <div className="bg-gray-950 rounded-2xl p-6">
             <div className="flex justify-between items-center mb-3 flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <Layers size={16} className="text-indigo-400" />
-                <code className="text-indigo-400 font-bold font-mono text-base">react-qr-label-designer</code>
+                <code className="text-indigo-400 font-bold font-mono text-base">react-qr-label</code>
               </div>
               <div className="flex gap-3">
-                <a href="https://www.npmjs.com/package/react-qr-label-designer" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300"><Download size={12} /> npm</a>
-                <a href="https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/packages/react-qr-label-designer" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300"><Github size={12} /> source</a>
+                <a href="https://www.npmjs.com/package/react-qr-label" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300"><Download size={12} /> npm</a>
+                <a href="https://github.com/shashi089/qr-code-layout-generate-tool/tree/main/packages/react-qr-label" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300"><Github size={12} /> source</a>
               </div>
             </div>
             <div className="bg-gray-800 rounded-lg px-4 py-3 font-mono text-sm text-gray-200">
-              npm install react-qr-label-designer
+              npm install react-qr-label
             </div>
             <p className="text-gray-400 text-sm mt-3">
               This package encapsulates the visual editor UI component and directly exports the headless generator (<code className="text-gray-300">StickerPrinter</code>) and PDF helper exports.
             </p>
             <p className="text-gray-400 text-sm mt-2">
-              Also import the stylesheet: <code className="text-gray-300">import 'react-qr-label-designer/style.css'</code>
+              Also import the stylesheet: <code className="text-gray-300">import 'react-qr-label/style.css'</code>
             </p>
           </div>
         </section>
@@ -134,14 +134,14 @@ export function DocsPage() {
         {/* ── EMBED DESIGNER ── */}
         <section id="embed-designer" className="mb-16 scroll-mt-24">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Embed Designer in React</h2>
-          <p className="text-gray-500 mb-6">Use the native <code className="text-blue-600 font-mono bg-blue-50 px-1 rounded">react-qr-label-designer</code> component wrapper to drop a visual editor into your React application in seconds.</p>
+          <p className="text-gray-500 mb-6">Use the native <code className="text-blue-600 font-mono bg-blue-50 px-1 rounded">react-qr-label</code> component wrapper to drop a visual editor into your React application in seconds.</p>
           <pre className="bg-gray-950 rounded-2xl p-5 overflow-x-auto text-sm leading-relaxed">
             <code className="text-gray-200">{
-`// npm install react-qr-label-designer
+`// npm install react-qr-label
  
 import { useState } from 'react';
-import { QRLabelDesigner, type StickerLayout } from 'react-qr-label-designer';
-import 'react-qr-label-designer/style.css';
+import { QRLabelDesigner, type StickerLayout } from 'react-qr-label';
+import 'react-qr-label/style.css';
 
 // Define your entity schema (the data fields available in the designer)
 const SCHEMA = {
@@ -192,10 +192,10 @@ export function LabelDesigner() {
         {/* ── HEADLESS ── */}
         <section id="headless" className="mb-16 scroll-mt-24">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Headless Rendering</h2>
-          <p className="text-gray-500 mb-6">Use the <code className="text-green-700 font-mono bg-green-50 px-1 rounded">StickerPrinter</code> engine (re-exported by <code className="text-green-700 font-mono bg-green-50 px-1 rounded">react-qr-label-designer</code>) to programmatically render labels without any UI. Works in browser environments.</p>
+          <p className="text-gray-500 mb-6">Use the <code className="text-green-700 font-mono bg-green-50 px-1 rounded">StickerPrinter</code> engine (re-exported by <code className="text-green-700 font-mono bg-green-50 px-1 rounded">react-qr-label</code>) to programmatically render labels without any UI. Works in browser environments.</p>
           <pre className="bg-gray-950 rounded-2xl p-5 overflow-x-auto text-sm leading-relaxed">
             <code className="text-gray-200">{
-`import { StickerPrinter } from 'react-qr-label-designer';
+`import { StickerPrinter } from 'react-qr-label';
 
 const printer = new StickerPrinter();
 
@@ -260,7 +260,7 @@ console.log(zplArray[0]); // ^XA ... ^XZ  — send to printer`
           <p className="text-gray-500 mb-6">Every label is a plain JSON object of type <code className="text-purple-700 font-mono bg-purple-50 px-1 rounded">StickerLayout</code>. Use <code className="text-purple-700 font-mono bg-purple-50 px-1 rounded">{'{{variableName}}'}</code> for dynamic content.</p>
           <pre className="bg-gray-950 rounded-2xl p-5 overflow-x-auto text-sm leading-relaxed">
             <code className="text-gray-200">{
-`// Re-exported by 'react-qr-label-designer'
+`// Re-exported by 'react-qr-label'
 
 type Unit = 'mm' | 'cm' | 'in' | 'px';
 
@@ -309,7 +309,7 @@ type EntitySchema = {
         {/* ── EXPORT FORMATS ── */}
         <section id="export" className="mb-16 scroll-mt-24">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Export Formats</h2>
-          <p className="text-gray-500 mb-6">All exports are handled by the <code className="text-green-700 font-mono bg-green-50 px-1 rounded">StickerPrinter</code> class re-exported by <code className="text-green-700 font-mono bg-green-50 px-1 rounded">react-qr-label-designer</code>.</p>
+          <p className="text-gray-500 mb-6">All exports are handled by the <code className="text-green-700 font-mono bg-green-50 px-1 rounded">StickerPrinter</code> class re-exported by <code className="text-green-700 font-mono bg-green-50 px-1 rounded">react-qr-label</code>.</p>
 
           <div className="grid sm:grid-cols-3 gap-4 mb-8">
             {[
@@ -327,8 +327,8 @@ type EntitySchema = {
 
           <pre className="bg-gray-950 rounded-2xl p-5 overflow-x-auto text-sm leading-relaxed">
             <code className="text-gray-200">{
-`import { StickerPrinter } from 'react-qr-label-designer';
-import { exportToPDF } from 'react-qr-label-designer/pdf'; // PDF sub-path export
+`import { StickerPrinter } from 'react-qr-label';
+import { exportToPDF } from 'react-qr-label/pdf'; // PDF sub-path export
 
 const printer = new StickerPrinter();
 const dataList = [{ fullName: 'Alice', employeeId: 'EMP-001' }];

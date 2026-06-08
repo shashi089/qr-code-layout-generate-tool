@@ -11,7 +11,7 @@ export default defineConfig({
     build: {
         lib: {
             entry: {
-                'react-qr-label-designer': path.resolve(__dirname, 'src/index.tsx'),
+                'react-qr-label': path.resolve(__dirname, 'src/index.tsx'),
                 'pdf': path.resolve(__dirname, 'src/pdf.ts')
             },
             formats: ['es', 'cjs']

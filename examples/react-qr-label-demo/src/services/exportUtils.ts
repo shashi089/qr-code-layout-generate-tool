@@ -1,6 +1,6 @@
-import { StickerPrinter } from 'react-qr-label-designer';
-import { exportToPDF } from 'react-qr-label-designer/pdf';
-import type { StickerLayout } from 'react-qr-label-designer';
+import { StickerPrinter } from 'react-qr-label';
+import { exportToPDF } from 'react-qr-label/pdf';
+import type { StickerLayout } from 'react-qr-label';
 
 /**
  * Export options for batch exports

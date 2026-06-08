@@ -1,5 +1,5 @@
 {
-  "name": "react-qr-label-designer-demo",
+  "name": "react-qr-label-demo",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,7 +12,7 @@
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.18",
     "qrlayout-core": "file:../../packages/core",
-    "react-qr-label-designer": "file:../../packages/react-qr-label-designer",
+    "react-qr-label": "file:../../packages/react-qr-label",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

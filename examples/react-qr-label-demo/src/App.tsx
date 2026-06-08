@@ -1,7 +1,7 @@
 // App.tsx
 import { useEffect, useState } from 'react';
-import { QRLabelDesigner, type EntitySchema, type StickerLayout } from 'react-qr-label-designer';
-import 'react-qr-label-designer/style.css';
+import { QRLabelDesigner, type EntitySchema, type StickerLayout } from 'react-qr-label';
+import 'react-qr-label/style.css';
 import './App.css';
 import { LabelList } from './features/labels/LabelList';
 import { storage } from './services/storage';
