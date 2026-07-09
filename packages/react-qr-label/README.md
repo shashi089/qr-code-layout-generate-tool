@@ -229,8 +229,8 @@ interface EntityField {
 | :--- | :--- |
 | [`qrlayout-core`](https://www.npmjs.com/package/qrlayout-core) | Headless engine — render PNG, PDF, ZPL without the UI |
 | [`qrlayout-ui`](https://www.npmjs.com/package/qrlayout-ui) | Framework-agnostic designer (vanilla TS) |
-| [`vue-qr-label`](https://www.npmjs.com/package/vue-qr-label) | Vue 3 wrapper |
-| [`svelte-qr-label`](https://www.npmjs.com/package/svelte-qr-label) | Svelte 5 wrapper |
+<!-- | [`vue-qr-label`](https://www.npmjs.com/package/vue-qr-label) | Vue 3 wrapper |
+| [`svelte-qr-label`](https://www.npmjs.com/package/svelte-qr-label) | Svelte 5 wrapper | -->
 
 ---
 
